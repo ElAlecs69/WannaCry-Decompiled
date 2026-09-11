@@ -1,0 +1,5 @@
+D:\Descargas\Malware\obj\Debug\net472\RedlineBuilder.csproj.AssemblyReference.cache
+D:\Descargas\Malware\obj\Debug\net472\RedlineBuilder.Resources.resources
+D:\Descargas\Malware\obj\Debug\net472\RedlineBuilder.csproj.GenerateResource.cache
+D:\Descargas\Malware\obj\Debug\net472\RedlineBuilder.GeneratedMSBuildEditorConfig.editorconfig
+D:\Descargas\Malware\obj\Debug\net472\RedlineBuilder.csproj.CoreCompileInputs.cache

@@ -1,0 +1,347 @@
+<Window x:Class="LicenseDialog.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Oracle Software License Agreement - V12.1"
+        Height="600" Width="900"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+
+        Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <!-- Colores base -->
+        <SolidColorBrush x:Key="SidebarBrush"   Color="#2B4C7E"/>
+        <SolidColorBrush x:Key="HeaderBrush"     Color="#1A3557"/>
+        <SolidColorBrush x:Key="AccentBrush"     Color="#C0392B"/>
+        <SolidColorBrush x:Key="BorderBrush"     Color="#A0A0A0"/>
+
+        <!-- Estilo de botón principal -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background"         Value="#2B4C7E"/>
+            <Setter Property="Foreground"         Value="White"/>
+            <Setter Property="FontSize"           Value="13"/>
+            <Setter Property="FontWeight"         Value="SemiBold"/>
+            <Setter Property="Padding"            Value="18,6"/>
+            <Setter Property="BorderThickness"    Value="1"/>
+            <Setter Property="BorderBrush"        Value="#1A3557"/>
+            <Setter Property="Cursor"             Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1A3557"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#0F2338"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo de botón secundario -->
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Background"         Value="#E8E8E8"/>
+            <Setter Property="Foreground"         Value="#222222"/>
+            <Setter Property="FontSize"           Value="13"/>
+            <Setter Property="Padding"            Value="18,6"/>
+            <Setter Property="BorderThickness"    Value="1"/>
+            <Setter Property="BorderBrush"        Value="#A0A0A0"/>
+            <Setter Property="Cursor"             Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#D0D0D0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo GroupBox -->
+        <Style x:Key="StyledGroup" TargetType="GroupBox">
+            <Setter Property="BorderBrush"     Value="#A0A0A0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="6"/>
+            <Setter Property="FontSize"        Value="12"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════ CUERPO PRINCIPAL ═══════════════ -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ── Sidebar izquierdo ── -->
+            <Border Grid.Column="0" Background="{StaticResource SidebarBrush}">
+                <StackPanel VerticalAlignment="Top" Margin="0,0,0,0">
+
+                    <!-- Logo / cabecera -->
+                    <Border Background="{StaticResource HeaderBrush}" Padding="16,14">
+                        <StackPanel>
+                            <!-- Logo texto estilizado -->
+                            <TextBlock Text="ORACLE"
+                                       FontSize="26" FontWeight="Bold"
+                                       Foreground="White"
+                                       FontFamily="Arial"
+
+                                       Margin="0,0,0,2"/>
+                            <Rectangle Height="2" Fill="{StaticResource AccentBrush}" Margin="0,0,40,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Título lateral -->
+                    <Border Padding="16,20">
+                        <TextBlock Text="License Terms&#x0a;Acceptance Required"
+                                   FontSize="14" FontWeight="SemiBold"
+                                   Foreground="White"
+                                   TextWrapping="Wrap"
+                                   LineHeight="22"/>
+                    </Border>
+
+                    <!-- Separador decorativo -->
+                    <Rectangle Height="1" Fill="#FFFFFF" Opacity="0.15" Margin="16,0"/>
+
+                    <!-- Info adicional -->
+                    <Border Padding="16,16">
+                        <TextBlock Text="Review terms to continue.&#x0a;No payment or deadline info."
+                                   FontSize="11"
+                                   Foreground="#B0C4DE"
+                                   TextWrapping="Wrap"
+                                   LineHeight="18"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ── Contenido derecho ── -->
+            <Grid Grid.Column="1" Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Cabecera del contenido -->
+                <Border Grid.Row="0" Background="#F0F4F8"
+                        BorderBrush="#D0D8E0" BorderThickness="0,0,0,1"
+                        Padding="16,10">
+                    <TextBlock Text="END-USER LICENSE AGREEMENT FOR ORACLE SOFTWARE"
+                               FontSize="13" FontWeight="Bold"
+                               Foreground="#1A3557"/>
+                </Border>
+
+                <!-- Texto de la licencia -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              Margin="16,10,16,10">
+                    <RichTextBox x:Name="LicenseText"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 FontSize="12"
+                                 FontFamily="Segoe UI"
+                                 Padding="0">
+                        <FlowDocument PageWidth="640" LineHeight="20">
+
+                            <Paragraph FontSize="12" Foreground="#333">
+                                Please read carefully. You must accept these terms to proceed with the installation.
+                            </Paragraph>
+
+                            <Paragraph FontSize="13" FontWeight="Bold" Foreground="#1A3557" Margin="0,10,0,2">
+                                1. LICENSE GRANT
+                            </Paragraph>
+                            <Paragraph FontSize="12" Foreground="#444" TextAlignment="Justify">
+                                This license grant entitles you to use Oracle Software under the terms of this agreement.
+                                The license is granted on a non-exclusive, non-transferable basis for use solely within
+                                your organization. Any reproduction or redistribution of the software not in accordance
+                                with this license agreement is expressly prohibited by law.
+                            </Paragraph>
+
+                            <Paragraph FontSize="13" FontWeight="Bold" Foreground="#1A3557" Margin="0,10,0,2">
+                                2. PERMITTED USES AND RESTRICTIONS
+                            </Paragraph>
+                            <Paragraph FontSize="12" Foreground="#444" TextAlignment="Justify">
+                                You may use the software only for lawful purposes and in accordance with this agreement.
+                                You agree not to reproduce, duplicate, copy, sell, resell, or exploit any portion of the
+                                software without the express written permission of Oracle Corporation. Reverse engineering,
+                                decompilation, or disassembly of the software is strictly prohibited.
+                            </Paragraph>
+
+                            <Paragraph FontSize="13" FontWeight="Bold" Foreground="#1A3557" Margin="0,10,0,2">
+                                3. PROPRIETARY RIGHTS
+                            </Paragraph>
+                            <Paragraph FontSize="12" Foreground="#444" TextAlignment="Justify">
+                                This Oracle software is protected by copyright laws and international copyright treaties,
+                                as well as other intellectual property laws and treaties. All proprietary rights,
+                                including all copyright and trademark rights, in and to the software are owned by Oracle
+                                Corporation and its licensors.
+                            </Paragraph>
+
+                            <Paragraph FontSize="13" FontWeight="Bold" Foreground="#1A3557" Margin="0,10,0,2">
+                                4. LIMITED WARRANTY
+                            </Paragraph>
+                            <Paragraph FontSize="12" Foreground="#444" TextAlignment="Justify">
+                                THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+                                INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+                                PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL ORACLE BE LIABLE FOR ANY CLAIM, DAMAGES
+                                OR OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE.
+                            </Paragraph>
+
+                            <Paragraph FontSize="13" FontWeight="Bold" Foreground="#1A3557" Margin="0,10,0,2">
+                                5. LIMITATION OF LIABILITY
+                            </Paragraph>
+                            <Paragraph FontSize="12" Foreground="#444" TextAlignment="Justify">
+                                IN NO EVENT SHALL ORACLE OR ITS SUPPLIERS BE LIABLE FOR ANY SPECIAL, INCIDENTAL,
+                                INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER ARISING OUT OF OR IN ANY WAY RELATED
+                                TO THE USE OF OR INABILITY TO USE THE SOFTWARE, EVEN IF ORACLE HAS BEEN ADVISED
+                                OF THE POSSIBILITY OF SUCH DAMAGES.
+                            </Paragraph>
+
+                            <Paragraph FontSize="13" FontWeight="Bold" Foreground="#1A3557" Margin="0,10,0,2">
+                                6. GENERAL TERMS
+                            </Paragraph>
+                            <Paragraph FontSize="12" Foreground="#444" TextAlignment="Justify">
+                                This agreement constitutes the entire agreement between you and Oracle relating to
+                                the software and supersedes all prior or contemporaneous understandings. If any
+                                provision of this agreement is held to be unenforceable, such provision shall be
+                                reformed only to the extent necessary to make it enforceable.
+                            </Paragraph>
+
+                        </FlowDocument>
+                    </RichTextBox>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- ═══════════════ BARRA DE ESTADO ═══════════════ -->
+        <Border Grid.Row="1" Background="#F5F5F5"
+                BorderBrush="#C8C8C8" BorderThickness="0,1,0,1"
+                Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="220"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Estado de instalación -->
+                <GroupBox Grid.Column="0" Header="Installation Status"
+                          Style="{StaticResource StyledGroup}"
+                          Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock x:Name="Step2Label" Text="Step 2: Vanibility"
+                                   FontSize="11" Foreground="#555" Margin="0,0,0,2"/>
+                        <TextBlock x:Name="Step3Label" Text="Step 3: Accept License"
+                                   FontSize="11" FontWeight="Bold" Foreground="#1A3557" Margin="0,0,0,6"/>
+                        <ProgressBar x:Name="InstallProgress"
+                                     Height="10" Minimum="0" Maximum="100" Value="60"
+                                     Foreground="#2B4C7E" Background="#D0D8E8"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Clave de licencia -->
+                <GroupBox Grid.Column="1" Header="License Key"
+                          Style="{StaticResource StyledGroup}"
+                          Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Enter Your Oracle License Key (Optional):"
+                                   FontSize="11" Foreground="#555" Margin="0,0,0,4"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="LicenseKeyBox"
+                                     Grid.Column="0"
+                                     Height="24" Padding="4,2"
+                                     FontSize="12"
+                                     BorderBrush="#A0A0A0" BorderThickness="1"
+                                     Margin="0,0,6,0"
+                                     VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Content="Validate Key"
+                                    Style="{StaticResource SecondaryButton}"
+                                    FontSize="11" Padding="10,3"
+                                    Click="ValidateKey_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Detalles de suscripción -->
+                <GroupBox Grid.Column="2" Header="Subscription Details"
+                          Style="{StaticResource StyledGroup}">
+                    <StackPanel>
+                        <TextBlock x:Name="SubscriptionInfo"
+                                   Text="No active subscription."
+                                   FontSize="11" Foreground="#777"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </GroupBox>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════ BOTONES INFERIORES ═══════════════ -->
+        <Border Grid.Row="2" Background="#ECECEC"
+                BorderBrush="#C8C8C8" BorderThickness="0,1,0,0"
+                Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Print License"
+                        Style="{StaticResource SecondaryButton}"
+                        Click="PrintLicense_Click"/>
+
+                <!-- Selector de idioma -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal"
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0,0,12,0">
+                    <TextBlock Text="Language: " FontSize="11" Foreground="#555"
+                               VerticalAlignment="Center"/>
+                    <ComboBox x:Name="LanguageCombo" Width="100" Height="24"
+                              FontSize="11" SelectedIndex="0">
+                        <ComboBoxItem>English</ComboBoxItem>
+                        <ComboBoxItem>Español</ComboBoxItem>
+                        <ComboBoxItem>Français</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <Button Grid.Column="2" Content="I Accept"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="IAccept_Click"/>
+
+                <Button Grid.Column="4" Content="Cancel"
+                        Style="{StaticResource SecondaryButton}"
+                        Click="Cancel_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
