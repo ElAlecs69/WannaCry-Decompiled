@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>LicenseDialog</AssemblyName>
+    <RootNamespace>LicenseDialog</RootNamespace>
+
+  </PropertyGroup>
+
+  <!-- Incluye el archivo de música junto al .exe al publicar -->
+  <ItemGroup>
+    <!-- <Content Include="background.mp3" CopyToOutputDirectory="PreserveNewest"/> -->
+  </ItemGroup>
+
+</Project>

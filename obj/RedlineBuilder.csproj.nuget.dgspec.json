@@ -1,0 +1,66 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Descargas\\Malware\\RedlineBuilder.csproj": {}
+  },
+  "projects": {
+    "D:\\Descargas\\Malware\\RedlineBuilder.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Descargas\\Malware\\RedlineBuilder.csproj",
+        "projectName": "RedlineBuilder",
+        "projectPath": "D:\\Descargas\\Malware\\RedlineBuilder.csproj",
+        "packagesPath": "C:\\Users\\aestradam014\\.nuget\\packages\\",
+        "outputPath": "D:\\Descargas\\Malware\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "D:\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "framework": "net472",
+            "targetAlias": "net472",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.400"
+      },
+      "frameworks": {
+        "net472": {
+          "framework": "net472",
+          "targetAlias": "net472",
+          "dependencies": {
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.3, )",
+              "autoReferenced": true
+            }
+          },
+          "runtimeIdentifierGraphPath": "D:\\Program Files\\dotnet\\sdk\\10.0.400\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}
