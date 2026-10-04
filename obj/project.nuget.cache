@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bcnGGb3ks4s=",
+  "dgSpecHash": "109+XHAQt/0=",
   "success": true,
-  "projectFilePath": "D:\\Descargas\\Malware\\RedlineBuilder.csproj",
+  "projectFilePath": "D:\\Descargas\\Malware\\WannaCry-Decompiled\\RedlineBuilder.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\aestradam014\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.3\\microsoft.netframework.referenceassemblies.1.0.3.nupkg.sha512",
     "C:\\Users\\aestradam014\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net472\\1.0.3\\microsoft.netframework.referenceassemblies.net472.1.0.3.nupkg.sha512"

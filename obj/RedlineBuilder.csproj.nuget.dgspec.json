@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Descargas\\Malware\\RedlineBuilder.csproj": {}
+    "D:\\Descargas\\Malware\\WannaCry-Decompiled\\RedlineBuilder.csproj": {}
   },
   "projects": {
-    "D:\\Descargas\\Malware\\RedlineBuilder.csproj": {
+    "D:\\Descargas\\Malware\\WannaCry-Decompiled\\RedlineBuilder.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Descargas\\Malware\\RedlineBuilder.csproj",
+        "projectUniqueName": "D:\\Descargas\\Malware\\WannaCry-Decompiled\\RedlineBuilder.csproj",
         "projectName": "RedlineBuilder",
-        "projectPath": "D:\\Descargas\\Malware\\RedlineBuilder.csproj",
+        "projectPath": "D:\\Descargas\\Malware\\WannaCry-Decompiled\\RedlineBuilder.csproj",
         "packagesPath": "C:\\Users\\aestradam014\\.nuget\\packages\\",
-        "outputPath": "D:\\Descargas\\Malware\\obj\\",
+        "outputPath": "D:\\Descargas\\Malware\\WannaCry-Decompiled\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "D:\\Roaming\\NuGet\\NuGet.Config"

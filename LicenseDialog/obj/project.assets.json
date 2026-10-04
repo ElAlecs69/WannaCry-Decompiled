@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Descargas\\Malware\\LicenseDialog\\LicenseDialog.csproj",
+      "projectUniqueName": "D:\\Descargas\\Malware\\WannaCry-Decompiled\\LicenseDialog\\LicenseDialog.csproj",
       "projectName": "LicenseDialog",
-      "projectPath": "D:\\Descargas\\Malware\\LicenseDialog\\LicenseDialog.csproj",
+      "projectPath": "D:\\Descargas\\Malware\\WannaCry-Decompiled\\LicenseDialog\\LicenseDialog.csproj",
       "packagesPath": "C:\\Users\\aestradam014\\.nuget\\packages\\",
-      "outputPath": "D:\\Descargas\\Malware\\LicenseDialog\\obj\\",
+      "outputPath": "D:\\Descargas\\Malware\\WannaCry-Decompiled\\LicenseDialog\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "D:\\Roaming\\NuGet\\NuGet.Config"
