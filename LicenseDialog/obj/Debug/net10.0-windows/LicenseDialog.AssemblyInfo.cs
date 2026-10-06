@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LicenseDialog")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb9543b2c820eab7e08829d717eab3f568422a5b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e5bcfbcc3bd3d59fb2e06d39280da5f25c3ea1e1")]
 [assembly: System.Reflection.AssemblyProductAttribute("LicenseDialog")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LicenseDialog")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
