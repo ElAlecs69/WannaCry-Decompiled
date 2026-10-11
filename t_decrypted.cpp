@@ -1,3 +1,5 @@
+#include <stdint.h>
+#include <cstdint>
 #include <cstdio>
 #include <list>
 #include <string>
@@ -6,15 +8,20 @@
 #include <ctime>
 #include <cwchar>
 #include <new>
-#include <cstdint>
 #include <iostream>
 #include <string>
-#include <stdint.h>
 #include <exception>
 
 #define pointer32 void*
 #define local_unwind2 _local_unwind2
 #define CONCAT31(extra, b) (((uint32_t)(extra) << 8) | (uint8_t)(b))
+#define CONCAT31(high, low) (((uint32_t)(high) << 8) | (uint8_t)(low))
+#define CONCAT11(a, b) (((unsigned short)(a) << 8) | (unsigned char)(b))
+#define CONCAT21(a, b) (((unsigned int)(a) << 8) | (unsigned char)(b))
+#define CONCAT31(a, b) (((unsigned int)(a) << 8) | (unsigned char)(b))
+#define CONCAT12(a, b) (((unsigned int)(a) << 16) | (unsigned short)(b))
+#define CONCAT22(a, b) (((unsigned int)(a) << 16) | (unsigned short)(b))
+#define CONCAT13(a, b) (((unsigned int)(a) << 24) | (unsigned int)(b))
 
 #include <windows.h>
 #include <aclapi.h>
@@ -1898,14 +1905,13 @@ DWORD __cdecl FUN_10003f00(DWORD param_1,DWORD param_2,LPCSTR param_3)
   return 0;
 }
 
-void __thiscall FUN_10003c00(void *this_ptr,LPCSTR param_1)
-
+int __stdcall FUN_10003c00(void *pThis, LPCSTR param_1)
 {
-  if (*(int *)((int)this_ptr + 8) != 0) {
-    (*DAT_1000d944)(*(int *)((int)this_ptr + 8));
-    *(int *)((int)this_ptr + 8) = 0;
+  if (*(int *)((int)pThis + 8) != 0) {
+    (*DAT_1000d944)(*(int *)((int)pThis + 8));
+    *(int *)((int)pThis + 8) = 0;
   }
-  FUN_10003f00(*(int *)((int)this_ptr + 4), *(int *)((int)this_ptr + 8), param_1);
+  FUN_10003f00(*(int *)((int)pThis + 4), *(int *)((int)pThis + 8), param_1);
   return;
 }
 
@@ -1976,9 +1982,9 @@ BYTE stack0x00001014[0x1000];
     uVar7 = uStack00000010 >> 3;
     uVar6 = (*in_stack_00002028 - 1) / (uVar7 - 0xb) + 1;
     *in_stack_00002028 = uVar6 * uVar7;
-puStack0000000c = static_cast<DWORD*>(GlobalAlloc(0, uVar6 * uVar7));
+puStack0000000c = static_cast<DWORD*>(GlobalAlloc((UINT)0, (SIZE_T)(uVar6 * uVar7)));
     if (puStack0000000c == (DWORD *)0x0) {
-      puVar3 = &stack0x00000014;
+      puVar3 = (undefined1 *)stack0x00000014;
       iVar4 = 0x1000;
       do {
         *puVar3 = 0;
@@ -1992,7 +1998,7 @@ puStack0000000c = static_cast<DWORD*>(GlobalAlloc(0, uVar6 * uVar7));
     if (uVar6 != 0) {
       do {
         uVar1 = uVar7 - 0xb;
-        puVar3 = &stack0x00001014;
+        puVar3 = (undefined1 *)stack0x00001014;
         iVar4 = 0x1000;
         do {
           *puVar3 = 0;
@@ -2021,7 +2027,7 @@ puStack0000000c = static_cast<DWORD*>(GlobalAlloc(0, uVar6 * uVar7));
 );
         if (iVar4 == 0) {
           GlobalFree(puStack0000000c);
-          puVar3 = &stack0x00000014;
+          puVar3 = (undefined1 *)stack0x00000014;
           iVar4 = 0x1000;
           do {
             *puVar3 = 0;
@@ -2046,7 +2052,7 @@ puStack0000000c = static_cast<DWORD*>(GlobalAlloc(0, uVar6 * uVar7));
         uStack00000004 = uStack00000004 + 1;
       } while (uStack00000004 < uVar6);
     }
-    puVar3 = &stack0x00000014;
+    puVar3 = (undefined1 *)stack0x00000014;
     iVar4 = 0x1000;
     do {
       *puVar3 = 0;
@@ -2055,7 +2061,7 @@ puStack0000000c = static_cast<DWORD*>(GlobalAlloc(0, uVar6 * uVar7));
     } while (iVar4 != 0);
     return puStack0000000c;
   }
-  puVar3 = &stack0x00000014;
+  puVar3 = (undefined1 *)stack0x00000014;
   iVar4 = 0x1000;
   do {
     *puVar3 = 0;
@@ -2108,32 +2114,32 @@ DWORD __stdcall FUN_10003ac0(void *pThis, LPCSTR param_1, LPCSTR param_2)
   if (param_1 == (LPCSTR)0x0) {
     iVar2 = (*DAT_1000d940)(*(undefined4 *)((int)pThis + 4),&DAT_1000d054,0x114,0,0,(int)pThis + 8);
     if (iVar2 == 0) {
-      FUN_10003bb0((int)this);
+      FUN_10003bb0((int)pThis);
       return 0;
     }
   }
   else {
-    iVar2 = FUN_10003c00(this,param_1);
+    iVar2 = FUN_10003c00(pThis,param_1);
     if (iVar2 == 0) {
-      iVar2 = (*DAT_1000d940)(*(undefined4 *)((int)this + 4),&DAT_1000cf40,0x114,0,0,(int)this + 0xc
+      iVar2 = (*DAT_1000d940)(*(undefined4 *)((int)pThis + 4),&DAT_1000cf40,0x114,0,0,(int)pThis + 0xc
                              );
       if (iVar2 == 0) {
 LAB_10003b86:
-        FUN_10003bb0((int)this);
+        FUN_10003bb0((int)pThis);
         return 0;
       }
-      bVar1 = FUN_10004350(*(undefined4 *)((int)this + 4),(HCRYPTKEY *)((int)this + 8));
-      if (CONCAT31(extraout_var,bVar1) == 0) goto LAB_10003b86;
-      iVar2 = FUN_10004040(*(undefined4 *)((int)this + 4),*(HCRYPTKEY *)((int)this + 8),6,param_1);
+      bVar1 = FUN_10004350(*(undefined4 *)((int)pThis + 4), *(HCRYPTKEY *)((int)pThis + 8));
+      if (!bVar1) goto LAB_10003b86;
+      iVar2 = FUN_10004040(*(undefined4 *)((int)pThis + 4),*(HCRYPTKEY *)((int)pThis + 8),6,param_1);
       if (iVar2 == 0) goto LAB_10003b86;
       if (param_2 != (LPCSTR)0x0) {
         FUN_10003c40(param_2);
       }
-      iVar2 = FUN_10003c00(this,param_1);
+      iVar2 = FUN_10003c00(pThis,param_1);
       if (iVar2 == 0) goto LAB_10003b86;
     }
-    if (*(int *)((int)this + 0xc) != 0) {
-      (*DAT_1000d944)(*(int *)((int)this + 0xc));
+    if (*(int *)((int)pThis + 0xc) != 0) {
+      (*DAT_1000d944)(*(int *)((int)pThis + 0xc));
     }
   }
   return 1;
@@ -2154,22 +2160,21 @@ LAB_10003b86:
   if (param_1 != (LPCSTR)0x0) {
     FUN_10003ac0((void *)((int)self + 0x2c),(LPCSTR)0x0,(LPCSTR)0x0);
   }
-  pvVar2 = GlobalAlloc(0,0x100000);
+pvVar2 = GlobalAlloc((UINT)0, (SIZE_T)0x10000);
   *(HGLOBAL *)((int)self + 0x4c8) = pvVar2;
   if (pvVar2 == (HGLOBAL)0x0) {
     return 0;
   }
-  pvVar2 = GlobalAlloc(0,0x100000);
+  pvVar2 = GlobalAlloc((UINT)0, (SIZE_T)0x100000);
   *(HGLOBAL *)((int)self + 0x4cc) = pvVar2;
   if (pvVar2 == (HGLOBAL)0x0) {
     return 0;
   }
   InitializeCriticalSection((LPCRITICAL_SECTION)((int)self + 0x4ec));
-  pvVar3 = CreateThread((LPSECURITY_ATTRIBUTES)0x0,0,(LPTHREAD_START_ROUTINE)&LAB_100029e0,self,0,
-                        (LPDWORD)0x0);
+  pvVar3 = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)&LAB_100029e0, self, 0, nullptr);
   *(HANDLE *)((int)self + 0x4d8) = pvVar3;
-  *(uint32_t *)((int)self + 0x4d4) = param_2;
-  *(uint32_t *)((int)self + 0x4d0) = param_3;
+  *(DWORD *)((int)self + 0x4d4) = param_2;
+  *(DWORD *)((int)self + 0x4d0) = param_3;
   _Seed = GetTickCount();
   srand(_Seed);
   return 1;
@@ -2177,54 +2182,54 @@ LAB_10003b86:
 
 
 
-void __thiscall FUN_100018f0(void *this,uint32_t param_1,uint32_t param_2)
+void __thiscall FUN_100018f0(void *pThis,DWORD param_1,DWORD param_2)
 
 {
-  *(DWORD *)((int)this + 0x91c) = param_1;
-  *(DWORD *)((int)this + 0x918) = param_2;
+  *(DWORD *)((int)pThis + 0x91c) = param_1;
+  *(DWORD *)((int)pThis + 0x918) = param_2;
   return;
 }
 
 
 
-void __thiscall FUN_10001910(void *this,wchar_t *param_1)
+void __thiscall FUN_10001910(void *pThis,wchar_t *param_1)
 
 {
   int iVar1;
   
-  wcscpy((wchar_t *)((int)this + 0x504),param_1);
-  iVar1 = *(int *)((int)this + 0x914);
-  *(int *)((int)this + 0x914) = iVar1 + 1;
-  swprintf((wchar_t *)((int)this + 0x70c),0x1000cbb8,(wchar_t *)((int)this + 0x504),iVar1,
+  wcscpy((wchar_t *)((int)pThis + 0x504),param_1);
+  iVar1 = *(int *)((int)pThis + 0x914);
+  *(int *)((int)pThis + 0x914) = iVar1 + 1;
+  swprintf((wchar_t *)((int)pThis + 0x70c),0x1000cbb8,(wchar_t *)((int)pThis + 0x504),iVar1,
            u__WNCRYT_1000cbc8);
   return;
 }
 
-void __thiscall FUN_10004420(void *this,BYTE *param_1,DWORD param_2)
+int __stdcall FUN_10004420(void *pThis, BYTE *param_1, DWORD param_2);
 
 {
-  CryptGenRandom(*(HCRYPTPROV *)((int)this + 4),param_2,param_1);
+  CryptGenRandom(*(HCRYPTPROV *)((int)pThis + 4),param_2,param_1);
   return;
 }
 
 typedef int (__cdecl *DAT_1000d948_t)(DWORD, int, int, int, BYTE*, DWORD*);
 extern DAT_1000d948_t DAT_1000d948;
 
-FUN_10004370(void *this,BYTE *param_1,DWORD param_2,BYTE *param_3,undefined4 *param_4)
+int __stdcall FUN_10004370(void *pThis, BYTE *param_1, DWORD param_2, BYTE *param_3, undefined4 *param_4)
 
 {
   LPCRITICAL_SECTION lpCriticalSection;
   BYTE *pBVar1;
-  uint32_t *puVar2;
+  DWORD *puVar2;
   int iVar3;
   unsigned int uVar4;
   BYTE *pBVar5;
   DWORD uVar6;
   
-  if (*(int *)((int)this + 8) == 0) {
+  if (*(int *)((int)pThis + 8) == 0) {
     return 0;
   }
-  iVar3 = FUN_10004420(this,param_1,param_2);
+  iVar3 = FUN_10004420(pThis,param_1,param_2);
   pBVar1 = param_3;
   if (iVar3 == 0) {
     return 0;
@@ -2241,11 +2246,11 @@ FUN_10004370(void *this,BYTE *param_1,DWORD param_2,BYTE *param_3,undefined4 *pa
       param_1 = param_1 + 1;
       pBVar5 = pBVar5 + 1;
     }
-    lpCriticalSection = (LPCRITICAL_SECTION)((int)this + 0x10);
+    lpCriticalSection = (LPCRITICAL_SECTION)((int)pThis + 0x10);
     EnterCriticalSection(lpCriticalSection);
-    puVar2 = param_4;
+    puVar2 = reinterpret_cast<DWORD*>(param_4);
     uVar6 = *param_4;
-    iVar3 = (*DAT_1000d948)(*(uint32_t *)((int)this + 8),0,1,0,pBVar1,&param_2);
+    iVar3 = (*DAT_1000d948)(*(DWORD *)((int)pThis + 8),0,1,0,pBVar1,&param_2);
     if (iVar3 == 0) {
       LeaveCriticalSection(lpCriticalSection);
       return 0;
@@ -2256,7 +2261,7 @@ FUN_10004370(void *this,BYTE *param_1,DWORD param_2,BYTE *param_3,undefined4 *pa
   return 1;
 }
 
-void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,uint param_4)
+void __thiscall FUN_10005dc0(void *pThis,byte *param_1,byte *param_2,int param_3,uint param_4)
 
 {
   byte bVar1;
@@ -2278,28 +2283,29 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
   
   if (param_1 == (byte *)0x0) {
     param_1 = &DAT_1000d8d8;
-    exception::exception(local_c,(char **)&param_1);
+char* err_msg = reinterpret_cast<char*>(param_1);
+new (local_c) std::exception();
                     // WARNING: Subroutine does not return
     _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
   }
   if (((param_3 != 0x10) && (param_3 != 0x18)) && (param_3 != 0x20)) {
     param_1 = &DAT_1000d8d8;
-    exception::exception(local_c,(char **)&param_1);
+new (local_c) std::exception();
                     // WARNING: Subroutine does not return
     _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
   }
   if (((param_4 != 0x10) && (param_4 != 0x18)) && (param_4 != 0x20)) {
     param_1 = &DAT_1000d8d8;
-    exception::exception(local_c,(char **)&param_1);
+new (local_c) std::exception();
                     // WARNING: Subroutine does not return
     _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
   }
-  *(int *)((int)this + 0x3c8) = param_3;
-  *(uint *)((int)this + 0x3cc) = param_4;
+  *(int *)((int)pThis + 0x3c8) = param_3;
+  *(uint *)((int)pThis + 0x3cc) = param_4;
   pbVar8 = param_2;
-  pbVar11 = (byte *)((int)this + 0x3d0);
+  pbVar11 = (byte *)((int)pThis + 0x3d0);
   for (uVar5 = param_4 >> 2; uVar5 != 0; uVar5 = uVar5 - 1) {
-    *(DWORD *)pbVar11 = *(uint32_t *)pbVar8;
+    *(DWORD *)pbVar11 = *(DWORD *)pbVar8;
     pbVar8 = pbVar8 + 4;
     pbVar11 = pbVar11 + 4;
   }
@@ -2308,8 +2314,8 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
     pbVar8 = pbVar8 + 1;
     pbVar11 = pbVar11 + 1;
   }
-  uVar5 = *(uint *)((int)this + 0x3cc);
-  pbVar8 = (byte *)((int)this + 0x3f0);
+  uVar5 = *(uint *)((int)pThis + 0x3cc);
+  pbVar8 = (byte *)((int)pThis + 0x3f0);
   for (uVar6 = uVar5 >> 2; uVar6 != 0; uVar6 = uVar6 - 1) {
     *(DWORD *)pbVar8 = *(DWORD *)param_2;
     param_2 = param_2 + 4;
@@ -2320,26 +2326,26 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
     param_2 = param_2 + 1;
     pbVar8 = pbVar8 + 1;
   }
-  if (*(int *)((int)this + 0x3c8) == 0x10) {
-    if (*(int *)((int)this + 0x3cc) == 0x10) {
+  if (*(int *)((int)pThis + 0x3c8) == 0x10) {
+    if (*(int *)((int)pThis + 0x3cc) == 0x10) {
       iVar7 = 10;
     }
     else {
-      iVar7 = (-(uint)(*(int *)((int)this + 0x3cc) != 0x18) & 2) + 0xc;
+      iVar7 = (-(uint)(*(int *)((int)pThis + 0x3cc) != 0x18) & 2) + 0xc;
     }
-    *(int *)((int)this + 0x410) = iVar7;
+    *(int *)((int)pThis + 0x410) = iVar7;
   }
-  else if (*(int *)((int)this + 0x3c8) == 0x18) {
-    *(uint *)((int)this + 0x410) = (-(uint)(*(int *)((int)this + 0x3cc) != 0x20) & 0xfffffffe) + 0xe
+  else if (*(int *)((int)pThis + 0x3c8) == 0x18) {
+    *(uint *)((int)pThis + 0x410) = (-(uint)(*(int *)((int)pThis + 0x3cc) != 0x20) & 0xfffffffe) + 0xe
     ;
   }
   else {
-    *(DWORD *)((int)this + 0x410) = 0xe;
+    *(DWORD *)((int)pThis + 0x410) = 0xe;
   }
   iVar9 = 0;
-  iVar7 = (int)(*(int *)((int)this + 0x3cc) + (*(int *)((int)this + 0x3cc) >> 0x1f & 3U)) >> 2;
-  if (-1 < *(int *)((int)this + 0x410)) {
-    puVar12 = (DWORD *)((int)this + 8);
+  iVar7 = (int)(*(int *)((int)pThis + 0x3cc) + (*(int *)((int)pThis + 0x3cc) >> 0x1f & 3U)) >> 2;
+  if (-1 < *(int *)((int)pThis + 0x410)) {
+    puVar12 = (DWORD *)((int)pThis + 8);
     do {
       iVar13 = iVar7;
       puVar15 = puVar12;
@@ -2351,11 +2357,11 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
       }
       iVar9 = iVar9 + 1;
       puVar12 = puVar12 + 8;
-    } while (iVar9 <= *(int *)((int)this + 0x410));
+    } while (iVar9 <= *(int *)((int)pThis + 0x410));
   }
   iVar9 = 0;
-  if (-1 < *(int *)((int)this + 0x410)) {
-    puVar12 = (DWORD *)((int)this + 0x1e8);
+  if (-1 < *(int *)((int)pThis + 0x410)) {
+    puVar12 = (DWORD *)((int)pThis + 0x1e8);
     do {
       iVar13 = iVar7;
       puVar15 = puVar12;
@@ -2367,11 +2373,11 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
       }
       iVar9 = iVar9 + 1;
       puVar12 = puVar12 + 8;
-    } while (iVar9 <= *(int *)((int)this + 0x410));
+    } while (iVar9 <= *(int *)((int)pThis + 0x410));
   }
-  puVar4 = (uint *)((int)this + 0x414);
-  iVar9 = (*(int *)((int)this + 0x410) + 1) * iVar7;
-  pbVar11 = (byte *)((int)(*(int *)((int)this + 0x3c8) + (*(int *)((int)this + 0x3c8) >> 0x1f & 3U))
+  puVar4 = (uint *)((int)pThis + 0x414);
+  iVar9 = (*(int *)((int)pThis + 0x410) + 1) * iVar7;
+  pbVar11 = (byte *)((int)(*(int *)((int)pThis + 0x3c8) + (*(int *)((int)pThis + 0x3c8) >> 0x1f & 3U))
                     >> 2);
   pbVar8 = param_1;
   param_1 = pbVar11;
@@ -2388,46 +2394,46 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
   }
   iVar13 = 0;
   if (0 < (int)pbVar11) {
-    param_1 = (byte *)((int)this + 0x414);
+    param_1 = (byte *)((int)pThis + 0x414);
     do {
       if (iVar9 <= iVar13) goto LAB_100061e6;
       iVar3 = iVar13 / iVar7;
       iVar10 = iVar13 % iVar7;
-      *(undefined4 *)((int)this + (iVar10 + iVar3 * 8) * 4 + 8) = *(undefined4 *)param_1;
+      *(undefined4 *)((int)pThis + (iVar10 + iVar3 * 8) * 4 + 8) = *(undefined4 *)param_1;
       iVar13 = iVar13 + 1;
       uVar2 = *(undefined4 *)param_1;
       param_1 = param_1 + 4;
-      *(undefined4 *)((int)this + (iVar10 + (*(int *)((int)this + 0x410) - iVar3) * 8) * 4 + 0x1e8)
+      *(undefined4 *)((int)pThis + (iVar10 + (*(int *)((int)pThis + 0x410) - iVar3) * 8) * 4 + 0x1e8)
            = uVar2;
     } while (iVar13 < (int)pbVar11);
   }
   if (iVar13 < iVar9) {
     param_2 = &DAT_1000ac3c;
     do {
-      uVar5 = *(uint *)((int)this + (int)pbVar11 * 4 + 0x410);
+      uVar5 = *(uint *)((int)pThis + (int)pbVar11 * 4 + 0x410);
       bVar1 = *param_2;
       param_2 = param_2 + 1;
-      *(uint *)((int)this + 0x414) =
-           *(uint *)((int)this + 0x414) ^
+      *(uint *)((int)pThis + 0x414) =
+           *(uint *)((int)pThis + 0x414) ^
            CONCAT31(CONCAT21(CONCAT11((&DAT_10007a3c)[uVar5 >> 0x10 & 0xff] ^ bVar1,
                                       (&DAT_10007a3c)[uVar5 >> 8 & 0xff]),
                              (&DAT_10007a3c)[uVar5 & 0xff]),(&DAT_10007a3c)[uVar5 >> 0x18]);
       if (pbVar11 == (byte *)0x8) {
-        puVar4 = (uint *)((int)this + 0x418);
+        puVar4 = (uint *)((int)pThis + 0x418);
         iVar3 = 3;
         do {
           *puVar4 = *puVar4 ^ puVar4[-1];
           puVar4 = puVar4 + 1;
           iVar3 = iVar3 + -1;
         } while (iVar3 != 0);
-        uVar5 = *(uint *)((int)this + 0x420);
+        uVar5 = *(uint *)((int)pThis + 0x420);
         iVar3 = 3;
-        *(uint *)((int)this + 0x424) =
-             *(uint *)((int)this + 0x424) ^
+        *(uint *)((int)pThis + 0x424) =
+             *(uint *)((int)pThis + 0x424) ^
              CONCAT31(CONCAT21(CONCAT11((&DAT_10007a3c)[uVar5 >> 0x18],
                                         (&DAT_10007a3c)[uVar5 >> 0x10 & 0xff]),
                                (&DAT_10007a3c)[uVar5 >> 8 & 0xff]),(&DAT_10007a3c)[uVar5 & 0xff]);
-        puVar4 = (uint *)((int)this + 0x428);
+        puVar4 = (uint *)((int)pThis + 0x428);
         do {
           *puVar4 = *puVar4 ^ puVar4[-1];
           puVar4 = puVar4 + 1;
@@ -2435,7 +2441,7 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
         } while (iVar3 != 0);
       }
       else if (1 < (int)pbVar11) {
-        puVar4 = (uint *)((int)this + 0x418);
+        puVar4 = (uint *)((int)pThis + 0x418);
         pbVar8 = pbVar11 + -1;
         do {
           *puVar4 = *puVar4 ^ puVar4[-1];
@@ -2445,16 +2451,16 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
       }
       param_1 = (byte *)0x0;
       if (0 < (int)pbVar11) {
-        puVar12 = (uint32_t *)((int)this + 0x414);
+        puVar12 = (DWORD *)((int)pThis + 0x414);
         do {
           if (iVar9 <= iVar13) goto LAB_100061e6;
           iVar3 = iVar13 / iVar7;
           iVar10 = iVar13 % iVar7;
-          *(DWORD *)((int)this + (iVar10 + iVar3 * 8) * 4 + 8) = *puVar12;
+          *(DWORD *)((int)pThis + (iVar10 + iVar3 * 8) * 4 + 8) = *puVar12;
           param_1 = param_1 + 1;
           iVar13 = iVar13 + 1;
-          *(uint32_t *)
-           ((int)this + (iVar10 + (*(int *)((int)this + 0x410) - iVar3) * 8) * 4 + 0x1e8) = *puVar12
+          *(DWORD *)
+           ((int)pThis + (iVar10 + (*(int *)((int)pThis + 0x410) - iVar3) * 8) * 4 + 0x1e8) = *puVar12
           ;
           puVar12 = puVar12 + 1;
         } while ((int)param_1 < (int)pbVar11);
@@ -2463,8 +2469,8 @@ void __thiscall FUN_10005dc0(void *this,byte *param_1,byte *param_2,int param_3,
   }
 LAB_100061e6:
   param_4 = 1;
-  if (1 < *(int *)((int)this + 0x410)) {
-    puVar4 = (uint *)((int)this + 0x208);
+  if (1 < *(int *)((int)pThis + 0x410)) {
+    puVar4 = (uint *)((int)pThis + 0x208);
     do {
       puVar14 = puVar4;
       iVar9 = iVar7;
@@ -2481,13 +2487,13 @@ LAB_100061e6:
       }
       param_4 = param_4 + 1;
       puVar4 = puVar4 + 8;
-    } while ((int)param_4 < *(int *)((int)this + 0x410));
+    } while ((int)param_4 < *(int *)((int)pThis + 0x410));
   }
-  *(undefined1 *)((int)this + 4) = 1;
+  *(undefined1 *)((int)pThis + 4) = 1;
   return;
 }
 
-void __thiscall FUN_10006280(void *this,byte *param_1,byte *param_2)
+void __thiscall FUN_10006280(void *pThis,byte *param_1,byte *param_2)
 
 {
   DWORD uVar1;
@@ -2502,22 +2508,22 @@ void __thiscall FUN_10006280(void *this,byte *param_1,byte *param_2)
   uint local_1c;
   exception local_c [12];
   
-  if (*(char *)((int)this + 4) != '\0') {
+  if (*(char *)((int)pThis + 4) != '\0') {
     local_1c = ((uint)*param_1 << 0x18 | (uint)param_1[1] << 0x10 | (uint)param_1[2] << 8 |
-               (uint)param_1[3]) ^ *(uint *)((int)this + 8);
+               (uint)param_1[3]) ^ *(uint *)((int)pThis + 8);
     local_20 = ((uint)param_1[4] << 0x18 | (uint)param_1[5] << 0x10 | (uint)param_1[6] << 8 |
-               (uint)param_1[7]) ^ *(uint *)((int)this + 0xc);
+               (uint)param_1[7]) ^ *(uint *)((int)pThis + 0xc);
     uVar3 = ((uint)param_1[8] << 0x18 | (uint)param_1[9] << 0x10 | (uint)param_1[10] << 8 |
-            (uint)param_1[0xb]) ^ *(uint *)((int)this + 0x10);
-    local_24 = *(uint *)((int)this + 0x14) ^
+            (uint)param_1[0xb]) ^ *(uint *)((int)pThis + 0x10);
+    local_24 = *(uint *)((int)pThis + 0x14) ^
                ((uint)CONCAT11(param_1[0xe],param_1[0xf]) |
                (uint)param_1[0xc] << 0x18 | (uint)param_1[0xd] << 0x10);
-    iVar7 = *(int *)((int)this + 0x410);
+    iVar7 = *(int *)((int)pThis + 0x410);
     if (1 < iVar7) {
       param_1 = (byte *)(iVar7 + -1);
       uVar2 = local_24;
       uVar4 = uVar3;
-      puVar5 = (uint *)((int)this + 0x30);
+      puVar5 = (uint *)((int)pThis + 0x30);
       do {
         uVar6 = *(uint *)(&DAT_1000843c + (uVar2 >> 8 & 0xff) * 4) ^
                 *(uint *)(&DAT_1000803c + (uVar4 >> 0x10 & 0xff) * 4) ^
@@ -2543,38 +2549,38 @@ void __thiscall FUN_10006280(void *this,byte *param_1,byte *param_2)
       } while (param_1 != (byte *)0x0);
     }
     iVar7 = iVar7 * 0x20;
-    uVar1 = *(undefined4 *)(iVar7 + 8 + (int)this);
+    uVar1 = *(undefined4 *)(iVar7 + 8 + (int)pThis);
     *param_2 = (&DAT_10007a3c)[local_1c >> 0x18] ^ (byte)((uint)uVar1 >> 0x18);
     param_2[1] = (&DAT_10007a3c)[local_20 >> 0x10 & 0xff] ^ (byte)((uint)uVar1 >> 0x10);
-    param_1._0_1_ = (byte)uVar1;
+    *param_1 = (byte)uVar1;
     param_2[2] = (&DAT_10007a3c)[uVar3 >> 8 & 0xff] ^ (byte)((uint)uVar1 >> 8);
     param_2[3] = (&DAT_10007a3c)[local_24 & 0xff] ^ (byte)param_1;
-    uVar1 = *(undefined4 *)((int)this + iVar7 + 0xc);
+    uVar1 = *(undefined4 *)((int)pThis + iVar7 + 0xc);
     param_2[4] = (&DAT_10007a3c)[local_20 >> 0x18] ^ (byte)((uint)uVar1 >> 0x18);
     param_2[5] = (&DAT_10007a3c)[uVar3 >> 0x10 & 0xff] ^ (byte)((uint)uVar1 >> 0x10);
-    param_1._0_1_ = (byte)uVar1;
+    *param_1 = (byte)uVar1;
     param_2[6] = (&DAT_10007a3c)[local_24 >> 8 & 0xff] ^ (byte)((uint)uVar1 >> 8);
     param_2[7] = (&DAT_10007a3c)[local_1c & 0xff] ^ (byte)param_1;
-    uVar1 = *(undefined4 *)((int)this + iVar7 + 0x10);
+    uVar1 = *(undefined4 *)((int)pThis + iVar7 + 0x10);
     param_2[8] = (&DAT_10007a3c)[uVar3 >> 0x18] ^ (byte)((uint)uVar1 >> 0x18);
     param_2[9] = (&DAT_10007a3c)[local_24 >> 0x10 & 0xff] ^ (byte)((uint)uVar1 >> 0x10);
-    param_1._0_1_ = (byte)uVar1;
+    *param_1 = (byte)uVar1;
     param_2[10] = (&DAT_10007a3c)[local_1c >> 8 & 0xff] ^ (byte)((uint)uVar1 >> 8);
     param_2[0xb] = (&DAT_10007a3c)[local_20 & 0xff] ^ (byte)param_1;
-    uVar1 = *(undefined4 *)((int)this + iVar7 + 0x14);
+    uVar1 = *(undefined4 *)((int)pThis + iVar7 + 0x14);
     param_2[0xc] = (&DAT_10007a3c)[local_24 >> 0x18] ^ (byte)((uint)uVar1 >> 0x18);
     param_2[0xd] = (&DAT_10007a3c)[local_1c >> 0x10 & 0xff] ^ (byte)((uint)uVar1 >> 0x10);
     param_2[0xe] = (&DAT_10007a3c)[local_20 >> 8 & 0xff] ^ (byte)((uint)uVar1 >> 8);
-    param_1._0_1_ = (byte)uVar1;
+    *param_1 = (byte)uVar1;
     param_2[0xf] = (&DAT_10007a3c)[uVar3 & 0xff] ^ (byte)param_1;
     return;
   }
-  exception::exception(local_c,&PTR_DAT_1000d8cc);
+  new (local_c) std::exception();
                     // WARNING: Subroutine does not return
   _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
 }
 
-void __thiscall FUN_10006640(void *this,uint *param_1,byte *param_2)
+void __thiscall FUN_10006640(void *pThis,uint *param_1,byte *param_2)
 
 {
    DWORD uVar1;
@@ -2586,19 +2592,19 @@ void __thiscall FUN_10006640(void *this,uint *param_1,byte *param_2)
   DWORD *puVar7;
   byte *pbVar8;
   uint uVar9;
-  uint32_t *puVar10;
+  DWORD *puVar10;
   int iVar11;
   uint *local_30;
   uint *local_28;
   int local_24;
   exception local_c [12];
   
-  if (*(char *)((int)this + 4) == '\0') {
-    exception::exception(local_c,&PTR_DAT_1000d8cc);
+  if (*(char *)((int)pThis + 4) == '\0') {
+    new (local_c) std::exception();
                     // WARNING: Subroutine does not return
     _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
   }
-  iVar5 = *(int *)((int)this + 0x3cc);
+  iVar5 = *(int *)((int)pThis + 0x3cc);
   if (iVar5 != 0x10) {
     iVar5 = (int)(iVar5 + (iVar5 >> 0x1f & 3U)) >> 2;
     if (iVar5 == 4) {
@@ -2611,8 +2617,8 @@ void __thiscall FUN_10006640(void *this,uint *param_1,byte *param_2)
     iVar11 = (&DAT_1000ac6c)[iVar2 * 8];
     iVar2 = (&DAT_1000ac74)[iVar2 * 8];
     if (0 < iVar5) {
-      local_30 = (uint *)((int)this + 8);
-      puVar3 = (uint *)((int)this + 0x454);
+      local_30 = (uint *)((int)pThis + 8);
+      puVar3 = (uint *)((int)pThis + 0x454);
       local_28 = (uint *)iVar5;
       do {
         *puVar3 = (uint)(byte)*param_1 << 0x18;
@@ -2628,34 +2634,34 @@ void __thiscall FUN_10006640(void *this,uint *param_1,byte *param_2)
       } while (local_28 != (uint *)0x0);
     }
     local_24 = 1;
-    if (1 < *(int *)((int)this + 0x410)) {
-      param_1 = (uint *)((int)this + 0x28);
+    if (1 < *(int *)((int)pThis + 0x410)) {
+      param_1 = (uint *)((int)pThis + 0x28);
       do {
         if (0 < iVar5) {
           local_28 = param_1;
           iVar6 = iVar4;
-          puVar3 = (uint *)((int)this + 0x434);
+          puVar3 = (uint *)((int)pThis + 0x434);
           local_30 = (uint *)iVar5;
           do {
             uVar9 = *local_28;
             local_28 = local_28 + 1;
             *puVar3 = *(uint *)(&DAT_1000843c +
-                               (uint)*(byte *)((int)this +
+                               (uint)*(byte *)((int)pThis +
                                               (((iVar11 - iVar4) + iVar6) % iVar5) * 4 + 0x455) * 4)
                       ^ *(uint *)(&DAT_1000883c +
-                                 (*(uint *)((int)this +
+                                 (*(uint *)((int)pThis +
                                            (((iVar2 - iVar4) + iVar6) % iVar5) * 4 + 0x454) & 0xff)
                                  * 4) ^
                       *(uint *)(&DAT_1000803c +
-                               (uint)*(byte *)((int)this + (iVar6 % iVar5) * 4 + 0x456) * 4) ^
+                               (uint)*(byte *)((int)pThis + (iVar6 % iVar5) * 4 + 0x456) * 4) ^
                       *(uint *)(&DAT_10007c3c + (uint)*(byte *)((int)puVar3 + 0x23) * 4) ^ uVar9;
             iVar6 = iVar6 + 1;
             local_30 = (uint *)((int)local_30 + -1);
             puVar3 = puVar3 + 1;
           } while (local_30 != (uint *)0x0);
         }
-        puVar7 = (DWORD *)((int)this + 0x434);
-        puVar10 = (DWORD *)((int)this + 0x454);
+        puVar7 = (DWORD *)((int)pThis + 0x434);
+        puVar10 = (DWORD *)((int)pThis + 0x454);
         for (iVar6 = iVar5; iVar6 != 0; iVar6 = iVar6 + -1) {
           *puVar10 = *puVar7;
           puVar7 = puVar7 + 1;
@@ -2663,24 +2669,24 @@ void __thiscall FUN_10006640(void *this,uint *param_1,byte *param_2)
         }
         local_24 = local_24 + 1;
         param_1 = param_1 + 8;
-      } while (local_24 < *(int *)((int)this + 0x410));
+      } while (local_24 < *(int *)((int)pThis + 0x410));
     }
     param_1 = (uint *)0x0;
     if (0 < iVar5) {
       iVar4 = iVar4 - iVar11;
       iVar2 = iVar2 - iVar11;
       pbVar8 = param_2;
-      param_2 = (byte *)((int)this + 0x454);
+      param_2 = (byte *)((int)pThis + 0x454);
       do {
-        uVar1 = *(uint32_t *)
-                 ((int)this + (int)(param_1 + *(int *)((int)this + 0x410) * 2) * 4 + 8);
+        uVar1 = *(undefined4 *)
+                 ((int)pThis + (int)(param_1 + *(int *)((int)pThis + 0x410) * 2) * 4 + 8);
         *pbVar8 = (&DAT_10007a3c)[param_2[3]] ^ (byte)((uint)uVar1 >> 0x18);
-        pbVar8[1] = (&DAT_10007a3c)[*(byte *)((int)this + ((iVar4 + iVar11) % iVar5) * 4 + 0x456)] ^
+        pbVar8[1] = (&DAT_10007a3c)[*(byte *)((int)pThis + ((iVar4 + iVar11) % iVar5) * 4 + 0x456)] ^
                     (byte)((uint)uVar1 >> 0x10);
-        pbVar8[2] = (&DAT_10007a3c)[*(byte *)((int)this + (iVar11 % iVar5) * 4 + 0x455)] ^
+        pbVar8[2] = (&DAT_10007a3c)[*(byte *)((int)pThis + (iVar11 % iVar5) * 4 + 0x455)] ^
                     (byte)((uint)uVar1 >> 8);
         pbVar8[3] = (&DAT_10007a3c)
-                    [*(uint *)((int)this + ((iVar2 + iVar11) % iVar5) * 4 + 0x454) & 0xff] ^
+                    [*(uint *)((int)pThis + ((iVar2 + iVar11) % iVar5) * 4 + 0x454) & 0xff] ^
                     (byte)uVar1;
         pbVar8 = pbVar8 + 4;
         param_1 = (uint *)((int)param_1 + 1);
@@ -2690,11 +2696,11 @@ void __thiscall FUN_10006640(void *this,uint *param_1,byte *param_2)
     }
     return;
   }
-  FUN_10006280(this,(byte *)param_1,param_2);
+  FUN_10006280(pThis,(byte *)param_1,param_2);
   return;
 }
 
-void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3,uint param_4)
+void __thiscall FUN_10006940(void *pThis,uint *param_1,uint *param_2,uint param_3,uint param_4)
 
 {
   uint *puVar1;
@@ -2706,19 +2712,19 @@ void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3
   bool bVar7;
   exception local_c [12];
   
-  if (*(char *)((int)this + 4) == '\0') {
-    exception::exception(local_c,&PTR_DAT_1000d8cc);
+  if (*(char *)((int)pThis + 4) == '\0') {
+    new (local_c) std::exception();
                     // WARNING: Subroutine does not return
     _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
   }
-  if ((param_3 != 0) && (uVar4 = *(uint *)((int)this + 0x3cc), param_3 % uVar4 == 0)) {
+  if ((param_3 != 0) && (uVar4 = *(uint *)((int)pThis + 0x3cc), param_3 % uVar4 == 0)) {
     if (param_4 == 1) {
-       ) && (hFile = CreateFileA(param_4,0x40000000,0,(LPSECURITY_ATTRIBUTES)0x0,2,0x80,(HANDLE)0x0),
+       HANDLE hfile = CreateFileA((LPCSTR)param_4, 0x40000000, 0, nullptr, 2, 0x80, nullptr);
       if (param_3 / uVar4 != 0) {
-        puVar2 = (uint *)((int)this + 0x3f0);
+        puVar2 = (uint *)((int)pThis + 0x3f0);
         do {
-          if (*(char *)((int)this + 4) == '\0') {
-            exception::exception(local_c,&PTR_DAT_1000d8cc);
+          if (*(char *)((int)pThis + 4) == '\0') {
+            new (local_c) std::exception();
                     // WARNING: Subroutine does not return
             _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
           }
@@ -2730,10 +2736,10 @@ void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3
                    (byte)*puVar1 ^ *(byte *)(((int)param_1 - (int)puVar2) + (int)puVar1);
               puVar1 = (uint *)((int)puVar1 + 1);
               iVar5 = iVar5 + 1;
-            } while (iVar5 < *(int *)((int)this + 0x3cc));
+            } while (iVar5 < *(int *)((int)pThis + 0x3cc));
           }
-          FUN_10006640(this,puVar2,(byte *)param_2);
-          uVar4 = *(uint *)((int)this + 0x3cc);
+          FUN_10006640(pThis,puVar2,(byte *)param_2);
+          uVar4 = *(uint *)((int)pThis + 0x3cc);
           puVar1 = param_2;
           puVar6 = puVar2;
           for (uVar3 = uVar4 >> 2; uVar3 != 0; uVar3 = uVar3 - 1) {
@@ -2746,7 +2752,7 @@ void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3
             puVar1 = (uint *)((int)puVar1 + 1);
             puVar6 = (uint *)((int)puVar6 + 1);
           }
-          uVar4 = *(uint *)((int)this + 0x3cc);
+          uVar4 = *(uint *)((int)pThis + 0x3cc);
           param_1 = (uint *)((int)param_1 + uVar4);
           param_2 = (uint *)((int)param_2 + uVar4);
           param_4 = param_4 + 1;
@@ -2759,24 +2765,24 @@ void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3
       if (bVar7) {
         if (param_3 / uVar4 != 0) {
           do {
-            FUN_10006640(this,(uint *)((int)this + 0x3f0),(byte *)param_2);
-            if (*(char *)((int)this + 4) == '\0') {
-              exception::exception(local_c,&PTR_DAT_1000d8cc);
+            FUN_10006640(pThis,(uint *)((int)pThis + 0x3f0),(byte *)param_2);
+            if (*(char *)((int)pThis + 4) == '\0') {
+              new (local_c) std::exception();
                     // WARNING: Subroutine does not return
               _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
             }
             iVar5 = 0;
             puVar2 = param_2;
-            if (0 < *(int *)((int)this + 0x3cc)) {
+            if (0 < *(int *)((int)pThis + 0x3cc)) {
               do {
                 *(byte *)puVar2 = (byte)*puVar2 ^ *(byte *)(iVar5 + (int)param_1);
                 puVar2 = (uint *)((int)puVar2 + 1);
                 iVar5 = iVar5 + 1;
-              } while (iVar5 < *(int *)((int)this + 0x3cc));
+              } while (iVar5 < *(int *)((int)pThis + 0x3cc));
             }
-            uVar4 = *(uint *)((int)this + 0x3cc);
+            uVar4 = *(uint *)((int)pThis + 0x3cc);
             puVar2 = param_2;
-            puVar1 = (uint *)((int)this + 0x3f0);
+            puVar1 = (uint *)((int)pThis + 0x3f0);
             for (uVar3 = uVar4 >> 2; uVar3 != 0; uVar3 = uVar3 - 1) {
               *puVar1 = *puVar2;
               puVar2 = puVar2 + 1;
@@ -2787,7 +2793,7 @@ void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3
               puVar2 = (uint *)((int)puVar2 + 1);
               puVar1 = (uint *)((int)puVar1 + 1);
             }
-            uVar4 = *(uint *)((int)this + 0x3cc);
+            uVar4 = *(uint *)((int)pThis + 0x3cc);
             param_1 = (uint *)((int)param_1 + uVar4);
             param_2 = (uint *)((int)param_2 + uVar4);
             param_4 = param_4 + 1;
@@ -2797,8 +2803,8 @@ void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3
       }
       else if (param_3 / uVar4 != 0) {
         do {
-          FUN_10006640(this,param_1,(byte *)param_2);
-          uVar4 = *(uint *)((int)this + 0x3cc);
+          FUN_10006640(pThis,param_1,(byte *)param_2);
+          uVar4 = *(uint *)((int)pThis + 0x3cc);
           param_1 = (uint *)((int)param_1 + uVar4);
           param_2 = (uint *)((int)param_2 + uVar4);
           param_4 = param_4 + 1;
@@ -2808,12 +2814,17 @@ void __thiscall FUN_10006940(void *this,uint *param_1,uint *param_2,uint param_3
     }
     return;
   }
-  exception::exception(local_c,&PTR_DAT_1000d8d0);
+  new (local_c) std::exception();
                     // WARNING: Subroutine does not return
   _CxxThrowException(local_c,(ThrowInfo *)&DAT_1000af00);
 }
 
-int __thiscall FUN_10001960(void *this,undefined4 param_1,LPCWSTR param_2,uint param_3)
+extern "C" {
+    uintptr_t DAT_1000d91c = 0;
+    uintptr_t DAT_1000d924 = 0;
+}
+
+int __thiscall FUN_10001960(void *pThis,undefined4 param_1,LPCWSTR param_2,uint param_3)
 
 {
   HANDLE pvVar1;
@@ -2823,17 +2834,17 @@ int __thiscall FUN_10001960(void *this,undefined4 param_1,LPCWSTR param_2,uint p
   int iVar5;
   unsigned int uVar6;
   int *piVar7;
-  uint32_t uVar8;
+  DWORD uVar8;
   int *piVar9;
-  uint32_t *puVar10;
+  DWORD *puVar10;
   HANDLE hFile;
   bool bVar11;
   unsigned int local_758;
   uint8_t local_754 [512];
   BYTE local_554 [512];
   HANDLE local_354;
-  uint32_t local_350;
-  uint32_t local_34c;
+  DWORD local_350;
+  DWORD local_34c;
   unsigned int local_348;
   HANDLE local_344;
   _FILETIME local_340;
@@ -2871,10 +2882,10 @@ int __thiscall FUN_10001960(void *this,undefined4 param_1,LPCWSTR param_2,uint p
   local_354 = (HANDLE)0xffffffff;
   local_344 = (HANDLE)0xffffffff;
   uVar8 = 0x80000000;
-  local_304 = (void *)((int)this + 4);
+  local_304 = (void *)((int)pThis + 4);
   local_34c = 0;
   local_328[0] = 0;
-  local_328._1_4_ = 0;
+  *reinterpret_cast<DWORD*>(&local_328[1]) = 0;
   local_323 = 0;
   local_321 = 0;
   local_348 = 0;
@@ -3056,7 +3067,7 @@ LAB_1000208e:
 
 
 
-undefined4 __thiscall FUN_10002200(void *this,wchar_t *param_1,uint param_2)
+undefined4 __thiscall FUN_10002200(void *pThis,wchar_t *param_1,uint param_2)
 
 {
   wchar_t *_Str1;
@@ -3100,7 +3111,7 @@ LAB_1000229a:
 
 
 undefined4 __thiscall
-FUN_10002300(void *this,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
+FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
 
 {
   WCHAR *pWVar1;
@@ -3146,7 +3157,7 @@ FUN_10002300(void *this,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
   puStack_8 = &LAB_10006e22;
   local_c = ExceptionList;
   ExceptionList = &local_c;
-  local_a34 = this;
+  local_a34 = pThis;
   local_a3c = operator_new(0x4ec);
   *local_a3c = (int)local_a3c;
   local_a3c[1] = (int)local_a3c;
@@ -3172,7 +3183,7 @@ FUN_10002300(void *this,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
   else {
     local_a28 = FUN_10002f70(param_1);
     do {
-      if ((*(int **)((int)this + 0x4d0) != (int *)0x0) && (**(int **)((int)this + 0x4d0) != 0))
+      if ((*(int **)((int)pThis + 0x4d0) != (int *)0x0) && (**(int **)((int)this + 0x4d0) != 0))
       break;
       iVar7 = wcscmp(local_a10.cFileName,(wchar_t *)&DAT_1000ccb4);
       if ((iVar7 != 0) && (iVar7 = wcscmp(local_a10.cFileName,(wchar_t *)&DAT_1000ccac), iVar7 != 0)
@@ -3321,7 +3332,7 @@ undefined4 __thiscall FUN_100027f0(void *this,LPCWSTR param_1,int *param_2)
   local_14[1] = (int)local_14;
   local_10 = 0;
   local_4 = 0;
-  FUN_10002300(this,param_1,local_18,0xffffffff,(int)param_2);
+  FUN_10002300(pThis,param_1,local_18,0xffffffff,(int)param_2);
   unsigned Var4 = 2;
   piVar3 = local_14;
   do {
@@ -3372,7 +3383,7 @@ undefined4 __thiscall FUN_100027f0(void *this,LPCWSTR param_1,int *param_2)
 
 
 
-undefined4 __thiscall FUN_10002940(void *this,wchar_t *param_1,uint param_2)
+undefined4 __thiscall FUN_10002940(void *pThis,wchar_t *param_1,uint param_2)
 
 {
   int iVar1;
@@ -3489,7 +3500,7 @@ LAB_10002b88:
 
 
 
-void __thiscall FUN_10002ba0(void *this,wchar_t *param_1)
+void __thiscall FUN_10002ba0(void *pThis,wchar_t *param_1)
 
 {
   LPCRITICAL_SECTION lpCriticalSection;
@@ -3523,7 +3534,7 @@ void __thiscall FUN_10002ba0(void *this,wchar_t *param_1)
     return;
   }
   ExceptionList = &local_c;
-  sVar4 = wcslen((wchar_t *)((int)this + 0x70c));
+  sVar4 = wcslen((wchar_t *)((int)pThis + 0x70c));
   if (sVar4 == 0) {
     FUN_10003010();
   }
@@ -3941,6 +3952,31 @@ bool FUN_100032c0(wchar_t *param_1,wchar_t *param_2)
 }
 
 
+undefined4 FUN_10004440(void)
+
+{
+  HMODULE hModule;
+  
+  if (DAT_1000d93c != (FARPROC)0x0) {
+    return 1;
+  }
+  hModule = LoadLibraryA(s_advapi32_dll_1000c058);
+  if (hModule != (HMODULE)0x0) {
+    DAT_1000d93c = GetProcAddress(hModule,s_CryptAcquireContextA_1000d1f8);
+    DAT_1000d940 = GetProcAddress(hModule,s_CryptImportKey_1000d1e8);
+    DAT_1000d944 = GetProcAddress(hModule,s_CryptDestroyKey_1000d1d8);
+    DAT_1000d948 = GetProcAddress(hModule,s_CryptEncrypt_1000d1c8);
+    DAT_1000d94c = GetProcAddress(hModule,s_CryptDecrypt_1000d1b8);
+    DAT_1000d950 = GetProcAddress(hModule,s_CryptGenKey_1000d1ac);
+    if ((((DAT_1000d93c != (FARPROC)0x0) && (DAT_1000d940 != (FARPROC)0x0)) &&
+        (DAT_1000d944 != (FARPROC)0x0)) &&
+       (((DAT_1000d948 != (FARPROC)0x0 && (DAT_1000d94c != (FARPROC)0x0)) &&
+        (DAT_1000d950 != (FARPROC)0x0)))) {
+      return 1;
+    }
+  }
+  return 0;
+}
 
 undefined4 FUN_10003410(void)
 
@@ -4026,20 +4062,20 @@ void __fastcall FUN_10003560(int param_1)
 
 
 
-void __thiscall FUN_100035b0(void *this,undefined4 *param_1)
+void __thiscall FUN_100035b0(void *pThis,undefined4 *param_1)
 
 {
   undefined4 *puVar1;
   
-  puVar1 = *(undefined4 **)this;
-  *(undefined4 *)this = *puVar1;
+  puVar1 = *(undefined4 **)pThis;
+  *(undefined4 *)pThis = *puVar1;
   *param_1 = puVar1;
   return;
 }
 
 
 
-void __thiscall FUN_100035c0(void *this,undefined4 *param_1,void *param_2,basic_string<> *param_3)
+void __thiscall FUN_100035c0(void *pThis,undefined4 *param_1,void *param_2,basic_string<> *param_3)
 
 {
   undefined4 *puVar1;
@@ -4060,7 +4096,7 @@ void __thiscall FUN_100035c0(void *this,undefined4 *param_1,void *param_2,basic_
   *(undefined4 **)((int)param_2 + 4) = puVar1;
   *(undefined4 **)puVar1[1] = puVar1;
   FUN_10003810((basic_string<> *)(puVar1 + 2),param_3);
-  *(int *)((int)this + 8) = *(int *)((int)this + 8) + 1;
+  *(int *)((int)pThis + 8) = *(int *)((int)pThis + 8) + 1;
   *param_1 = puVar1;
   return;
 }
@@ -4091,7 +4127,7 @@ void __thiscall FUN_10003620(void *this,int *param_1,int *param_2)
   param_2[4] = 0;
   param_2[5] = 0;
   operator_delete(param_2);
-  *(int *)((int)this + 8) = *(int *)((int)this + 8) + -1;
+  *(int *)((int)pThis + 8) = *(int *)((int)this + 8) + -1;
   *param_1 = iVar2;
   return;
 }
@@ -4127,7 +4163,7 @@ void __thiscall FUN_100036a0(void *this,int *param_1,int *param_2,int *param_3)
     param_2[4] = 0;
     param_2[5] = 0;
     operator_delete(param_2);
-    *(int *)((int)this + 8) = *(int *)((int)this + 8) + -1;
+    *(int *)((int)pThis + 8) = *(int *)((int)this + 8) + -1;
     param_2 = piVar2;
   } while (piVar2 != param_3);
   *param_1 = (int)piVar2;
@@ -4157,7 +4193,7 @@ void FUN_10003730(undefined4 *param_1,int param_2)
 
 
 undefined4 * __thiscall
-FUN_10003760(void *this,undefined4 *param_1,void *param_2,undefined4 *param_3)
+FUN_10003760(void *pThis,undefined4 *param_1,void *param_2,undefined4 *param_3)
 
 {
   undefined4 *puVar1;
@@ -4193,7 +4229,7 @@ FUN_10003760(void *this,undefined4 *param_1,void *param_2,undefined4 *param_3)
 
 
 
-void __thiscall FUN_100037c0(void *this,undefined4 *param_1,int *param_2,int *param_3)
+void __thiscall FUN_100037c0(void *pThis,undefined4 *param_1,int *param_2,int *param_3)
 
 {
   int *piVar1;
@@ -4203,7 +4239,7 @@ void __thiscall FUN_100037c0(void *this,undefined4 *param_1,int *param_2,int *pa
     *(int *)param_2[1] = *param_2;
     *(int *)(*param_2 + 4) = param_2[1];
     operator_delete(param_2);
-    *(int *)((int)this + 8) = *(int *)((int)this + 8) + -1;
+    *(int *)((int)pThis + 8) = *(int *)((int)pThis + 8) + -1;
     param_2 = piVar1;
   }
   *param_1 = param_2;
@@ -4438,7 +4474,7 @@ undefined4 __thiscall FUN_10003d10(void *this,LPCSTR param_1,LPCSTR param_2)
   } while (cVar1 != '\0');
   local_22c = ~uVar3 - 1;
   ExceptionList = &local_14;
-  iVar2 = FUN_10003a80((int)this);
+  iVar2 = FUN_10003a80((int)pThis);
   if (iVar2 != 0) {
     local_8 = 0;
     iVar2 = FUN_10003f00(*(undefined4 *)((int)this + 4),(int)this + 8,param_1);
@@ -4508,35 +4544,7 @@ void FUN_10003ef6(void)
   return;
 }
 
-undefined4 __thiscall
-
-undefined4 FUN_10004440(void)
-
-{
-  HMODULE hModule;
-  
-  if (DAT_1000d93c != (FARPROC)0x0) {
-    return 1;
-  }
-  hModule = LoadLibraryA(s_advapi32_dll_1000c058);
-  if (hModule != (HMODULE)0x0) {
-    DAT_1000d93c = GetProcAddress(hModule,s_CryptAcquireContextA_1000d1f8);
-    DAT_1000d940 = GetProcAddress(hModule,s_CryptImportKey_1000d1e8);
-    DAT_1000d944 = GetProcAddress(hModule,s_CryptDestroyKey_1000d1d8);
-    DAT_1000d948 = GetProcAddress(hModule,s_CryptEncrypt_1000d1c8);
-    DAT_1000d94c = GetProcAddress(hModule,s_CryptDecrypt_1000d1b8);
-    DAT_1000d950 = GetProcAddress(hModule,s_CryptGenKey_1000d1ac);
-    if ((((DAT_1000d93c != (FARPROC)0x0) && (DAT_1000d940 != (FARPROC)0x0)) &&
-        (DAT_1000d944 != (FARPROC)0x0)) &&
-       (((DAT_1000d948 != (FARPROC)0x0 && (DAT_1000d94c != (FARPROC)0x0)) &&
-        (DAT_1000d950 != (FARPROC)0x0)))) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-
+undefined4 __thiscall;
 
 undefined4 __cdecl FUN_10004500(undefined4 param_1)
 
@@ -5050,7 +5058,7 @@ LPWSTR __cdecl FUN_10005060(int param_1,LPWSTR param_2)
     swprintf(param_2,0x1000d768,_Format,u__RECYCLE_1000d778);
     CreateDirectoryW(param_2,(LPSECURITY_ATTRIBUTES)0x0);
     sprintf(local_400,s_attrib__h__s__C___s_1000d748,_Format,s__RECYCLE_1000d75c);
-    FUN_10001080(local_400,0,(LPDWORD)0x0);
+    extern "C" BOOL FUN_10001080(LPSTR param_1, DWORD param_2, LPDWORD param_3);
   }
   return param_2;
 }
@@ -5564,14 +5572,14 @@ void __fastcall FUN_10005d80(undefined4 *param_1)
 
 
 
-undefined4 * __thiscall FUN_10005d90(void *this,byte param_1)
+undefined4 * __thiscall FUN_10005d90(void *pThis,byte param_1)
 
 {
-  FUN_10005db0(this);
+  FUN_10005db0(pThis);
   if ((param_1 & 1) != 0) {
-    operator_delete(this);
+    operator_delete(pThis);
   }
-  return this;
+  return pThis;
 }
 
 void * __cdecl operator_new(uint param_1)
@@ -5724,7 +5732,7 @@ LAB_10006d27:
 
 
 
-void __thiscall type_info::~type_info(type_info *this)
+void __thiscall type_info::~type_info(type_info *pThis)
 
 {
                     // WARNING: Could not recover jumptable at 0x10006d7c. Too many branches
@@ -5762,7 +5770,7 @@ void Unwind_10006d9b(void)
 {
   int unaff_EBP;
   
-  FUN_10003a60((undefined4 *)(*(int *)(unaff_EBP + -0x10) + 0x2c));
+  FUN_10003a60((DWORD *)(*(int *)(unaff_EBP + -0x10) + 0x2c));
   return;
 }
 
@@ -5773,7 +5781,7 @@ void Unwind_10006da6(void)
 {
   int unaff_EBP;
   
-  FUN_10005db0((undefined4 *)(*(int *)(unaff_EBP + -0x10) + 0x54));
+  FUN_10005db0((DWORD *)(*(int *)(unaff_EBP + -0x10) + 0x54));
   return;
 }
 
@@ -5784,7 +5792,7 @@ void Unwind_10006dc0(void)
 {
   int unaff_EBP;
   
-  FUN_10003a60((undefined4 *)(*(int *)(unaff_EBP + -0x10) + 4));
+  FUN_10003a60((DWORD *)(*(int *)(unaff_EBP + -0x10) + 4));
   return;
 }
 
@@ -5795,7 +5803,7 @@ void Unwind_10006dcb(void)
 {
   int unaff_EBP;
   
-  FUN_10003a60((undefined4 *)(*(int *)(unaff_EBP + -0x10) + 0x2c));
+  FUN_10003a60((DWORD *)(*(int *)(unaff_EBP + -0x10) + 0x2c));
   return;
 }
 
@@ -5806,7 +5814,7 @@ void Unwind_10006dd6(void)
 {
   int unaff_EBP;
   
-  FUN_10005db0((undefined4 *)(*(int *)(unaff_EBP + -0x10) + 0x54));
+  FUN_10005db0((DWORD *)(*(int *)(unaff_EBP + -0x10) + 0x54));
   return;
 }
 
