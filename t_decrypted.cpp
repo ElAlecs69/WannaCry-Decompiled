@@ -11,6 +11,8 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <string>
+//using namespace std;
 
 #define pointer32 void*
 #define local_unwind2 _local_unwind2
@@ -40,6 +42,7 @@ typedef BYTE      undefined1;
 typedef WORD      undefined2;
 typedef DWORD     undefined4;
 typedef unsigned __int64 undefined8;
+typedef void code(void);
 
 // Estructura de 3 bytes para undefined3
 struct undefined3 {
@@ -2824,6 +2827,8 @@ extern "C" {
     uintptr_t DAT_1000d924 = 0;
 }
 
+typedef void callback_fn_t(undefined4, LPCWSTR, LONG, DWORD, uint, DWORD);
+
 int __thiscall FUN_10001960(void *pThis,undefined4 param_1,LPCWSTR param_2,uint param_3)
 
 {
@@ -2944,35 +2949,35 @@ int __thiscall FUN_10001960(void *pThis,undefined4 param_1,LPCWSTR param_2,uint 
     }
   }
   else {
-    iVar5 = (*DAT_1000d924)(pvVar1,*(uint32_t *)((int)this + 0x4c8),0x10000,&local_2f8,0);
+    iVar5 = (*DAT_1000d924)(pvVar1,*(DWORD *)((int)pThis + 0x4c8),0x10000,&local_2f8,0);
     if ((iVar5 == 0) || (local_2f8 != 0x10000)) goto LAB_1000208e;
     SetFilePointer(pvVar1,0,(PLONG)0x0,2);
-    iVar5 = (*DAT_1000d920)(pvVar1,*(uint32_t *)((int)this + 0x4c8),0x10000,&local_2f4,0);
+    iVar5 = (*DAT_1000d920)(pvVar1,*(DWORD *)((int)pThis + 0x4c8),0x10000,&local_2f4,0);
     if ((iVar5 == 0) || (local_2f4 != 0x10000)) goto LAB_1000208e;
-    puVar10 = *(uint32_t **)((int)this + 0x4c8);
+    puVar10 = *(DWORD **)((int)pThis + 0x4c8);
     for (iVar5 = 0x4000; iVar5 != 0; iVar5 = iVar5 + -1) {
       *puVar10 = 0;
       puVar10 = puVar10 + 1;
     }
     SetFilePointer(pvVar1,0,(PLONG)0x0,0);
-    iVar5 = (*DAT_1000d920)(pvVar1,*(undefined4 *)((int)this + 0x4c8),0x10000,&local_2f4,0);
+    iVar5 = (*DAT_1000d920)(pvVar1,*(undefined4 *)((int)pThis + 0x4c8),0x10000,&local_2f4,0);
     if ((iVar5 == 0) || (local_2f4 != 0x10000)) goto LAB_1000208e;
     SetFilePointer(pvVar1,0,(PLONG)0x0,0);
     local_344 = pvVar1;
   }
   hFile = local_344;
   if (((((param_3 == 4) && (local_320.s.HighPart < 1)) && (local_320.s.LowPart < 0xc800000)) &&
-      ((*(int *)((int)this + 0x918) != 0 &&
-       (uVar3 = rand(), uVar3 % *(uint *)((int)this + 0x918) == 0)))) &&
-     (*(uint *)((int)this + 0x920) < *(uint *)((int)this + 0x91c))) {
+      ((*(int *)((int)pThis + 0x918) != 0 &&
+       (uVar3 = rand(), uVar3 % *(uint *)((int)pThis + 0x918) == 0)))) &&
+     (*(uint *)((int)pThis + 0x920) < *(uint *)((int)pThis + 0x91c))) {
     local_318 = 1;
-    local_304 = (void *)((int)this + 0x2c);
-    *(uint *)((int)this + 0x920) = *(uint *)((int)this + 0x920) + 1;
+    local_304 = (void *)((int)pThis + 0x2c);
+    *(uint *)((int)pThis + 0x920) = *(uint *)((int)pThis + 0x920) + 1;
   }
   local_34c = 0x200;
-  iVar5 = FUN_10004370(local_304,local_314,0x10,local_554,&local_34c);
+  iVar5 = FUN_10004370(local_304,local_314,0x10,local_554,(undefined4 *)&local_34c);
   if (iVar5 != 0) {
-    FUN_10005dc0((void *)((int)this + 0x54),local_314,PTR_DAT_1000d8d4,0x10,0x10);
+    FUN_10005dc0((void *)((int)pThis + 0x54),local_314,PTR_DAT_1000d8d4,0x10,0x10);
     pbVar4 = local_314;
     for (iVar5 = 0x10; iVar5 != 0; iVar5 = iVar5 + -1) {
       *pbVar4 = 0;
@@ -2985,10 +2990,10 @@ int __thiscall FUN_10001960(void *pThis,undefined4 param_1,LPCWSTR param_2,uint 
          (iVar5 = (*DAT_1000d920)(hFile,&local_320,8,&local_2f4,0), iVar5 != 0)))))) {
       if (param_3 != 4) {
 LAB_100020b7:
-        SetFileTime(hFile,&local_340,&local_338,&local_330);
+        SetFileTime(hFile, (const FILETIME *)&local_340, (const FILETIME *)&local_338, (const FILETIME *)&local_330);
         if (param_3 == 4) {
-          (*DAT_1000d934)();
-          (*DAT_1000d934)(hFile);
+          //(*DAT_1000d934)();
+          (*DAT_1000d934)((DWORD)hFile);
           local_344 = (HANDLE)0xffffffff;
           local_354 = (HANDLE)0xffffffff;
           iVar5 = (*DAT_1000d928)(&local_2f0,param_2);
@@ -3001,16 +3006,17 @@ LAB_100020b7:
           }
         }
         else {
-          (*DAT_1000d934)(pvVar1);
+          (*DAT_1000d934)((DWORD)pvVar1);
           local_344 = (HANDLE)0xffffffff;
           local_354 = (HANDLE)0xffffffff;
           iVar5 = (*DAT_1000d928)(param_1,param_2);
           local_20 = iVar5;
         }
-        if ((iVar5 != 0) && (*(code **)((int)this + 0x4d4) != (code *)0x0)) {
-          (**(code **)((int)this + 0x4d4))
-                    (param_1,param_2,local_320.s.HighPart,local_320.s.LowPart,param_3,local_318);
-        }
+        if ((iVar5 != 0) && (*(callback_fn_t **)((int)pThis + 0x4d4) != (callback_fn_t *)0x0)) {
+    (*(callback_fn_t **)((int)pThis + 0x4d4))(
+        param_1, param_2, local_320.s.HighPart, local_320.s.LowPart, param_3, local_318
+    );
+}
         local_unwind2(&local_14,0xffffffff);
         ExceptionList = local_14;
         return iVar5;
@@ -3019,11 +3025,11 @@ LAB_100020b7:
       local_2fc = local_320.s.HighPart;
       if (local_348 == 3) {
         SetFilePointer(pvVar1,-0x10000,(PLONG)0x0,2);
-        iVar5 = (*DAT_1000d924)(pvVar1,*(undefined4 *)((int)this + 0x4c8),0x10000,&local_2f8,0);
+        iVar5 = (*DAT_1000d924)(pvVar1,*(undefined4 *)((int)pThis + 0x4c8),0x10000,&local_2f8,0);
         if ((iVar5 == 0) || (local_2f8 != 0x10000)) goto LAB_1000208e;
-        FUN_10006940((void *)((int)this + 0x54),*(uint **)((int)this + 0x4c8),
-                     *(uint **)((int)this + 0x4cc),0x10000,1);
-        iVar5 = (*DAT_1000d920)(hFile,*(undefined4 *)((int)this + 0x4cc),0x10000,&local_2f4,0);
+        FUN_10006940((void *)((int)pThis + 0x54),*(uint **)((int)pThis + 0x4c8),
+                     *(uint **)((int)pThis + 0x4cc),0x10000,1);
+        iVar5 = (*DAT_1000d920)(hFile,*(undefined4 *)((int)pThis + 0x4cc),0x10000,&local_2f4,0);
         if ((iVar5 == 0) || (local_2f4 != 0x10000)) goto LAB_1000208e;
         SetFilePointer(pvVar1,0x10000,(PLONG)0x0,0);
         bVar11 = 0xffff < local_300;
@@ -3034,15 +3040,15 @@ LAB_100020b7:
         pvVar1 = local_354;
         hFile = local_344;
         if ((local_2fc < 0) || ((local_2fc < 1 && (local_300 == 0)))) goto LAB_100020b7;
-        if ((((*(int **)((int)this + 0x4d0) != (int *)0x0) && (**(int **)((int)this + 0x4d0) != 0))
-            || (iVar5 = (*DAT_1000d924)(local_354,*(uint32_t *)((int)this + 0x4c8),0x100000,
+        if ((((*(int **)((int)pThis + 0x4d0) != (int *)0x0) && (**(int **)((int)pThis + 0x4d0) != 0))
+            || (iVar5 = (*DAT_1000d924)(local_354,*(uint32_t *)((int)pThis + 0x4c8),0x100000,
                                         &local_2f8,0), iVar5 == 0)) || (local_2f8 == 0)) break;
         bVar11 = local_300 < local_2f8;
         local_300 = local_300 - local_2f8;
         local_2fc = local_2fc - (uint)bVar11;
         uVar3 = ((local_2f8 - 1 >> 4) + 1) * 0x10;
         if (local_2f8 < uVar3) {
-          puVar10 = (undefined4 *)(*(int *)((int)this + 0x4c8) + local_2f8);
+          puVar10 = (undefined4 *)(*(int *)((int)pThis + 0x4c8) + local_2f8);
           for (uVar6 = uVar3 - local_2f8 >> 2; uVar6 != 0; uVar6 = uVar6 - 1) {
             *puVar10 = 0;
             puVar10 = puVar10 + 1;
@@ -3052,9 +3058,9 @@ LAB_100020b7:
             puVar10 = (undefined4 *)((int)puVar10 + 1);
           }
         }
-        FUN_10006940((void *)((int)this + 0x54),*(uint **)((int)this + 0x4c8),
-                     *(uint **)((int)this + 0x4cc),uVar3,1);
-        iVar5 = (*DAT_1000d920)(local_344,*(uint **)((int)this + 0x4cc),uVar3,&local_2f4,0);
+        FUN_10006940((void *)((int)pThis + 0x54),*(uint **)((int)pThis + 0x4c8),
+                     *(uint **)((int)pThis + 0x4cc),uVar3,1);
+        iVar5 = (*DAT_1000d920)(local_344,*(uint **)((int)pThis + 0x4cc),uVar3,&local_2f4,0);
         if ((iVar5 == 0) || (local_2f4 != uVar3)) break;
       }
     }
@@ -3096,19 +3102,37 @@ undefined4 __thiscall FUN_10002200(void *pThis,wchar_t *param_1,uint param_2)
 LAB_1000229a:
   DVar2 = GetFileAttributesW(local_2d0);
   if (DVar2 == 0xffffffff) {
-    iVar1 = FUN_10001960(this,param_1,local_2d0,param_2);
+    iVar1 = FUN_10001960(pThis, (undefined4)param_1, local_2d0, param_2);
     if (iVar1 == 0) {
       (*DAT_1000d930)(local_2d0);
       return 0;
     }
   }
   if (param_2 == 4) {
-    FUN_10002ba0(this,param_1);
+    FUN_10002ba0(pThis,param_1);
   }
   return 1;
 }
 
+int FUN_10003730(undefined4 *param_1,int param_2)
 
+{
+  undefined4 *puVar1;
+  
+  puVar1 = (undefined4 *)operator_new(0x18);
+  if (param_1 == (undefined4 *)0x0) {
+    param_1 = puVar1;
+  }
+  *puVar1 = (undefined4)param_1;
+  if (param_2 != 0) {
+    puVar1[1] = param_2;
+    return;
+  }
+  puVar1[1] = (undefined4)puVar1;
+  return puVar1;
+}
+
+wchar_t u__Please_Read_Me__txt_1000cc74[] = L"@Please_Read_Me@.txt";
 
 undefined4 __thiscall
 FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
@@ -3139,9 +3163,9 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
   int local_a30;
   HANDLE local_a2c;
   int local_a28;
-  basic_string<> local_a24 [16];
+  char local_a24 [64];
   DWORD local_a14;
-  _WIN32_FIND_DATAW local_a10;
+  WIN32_FIND_DATAW local_a10;
   wchar_t local_7c0 [360];
   wchar_t local_4f0;
   DWORD local_4ee [179];
@@ -3158,32 +3182,32 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
   local_c = ExceptionList;
   ExceptionList = &local_c;
   local_a34 = pThis;
-  local_a3c = operator_new(0x4ec);
+  local_a3c = (int *)operator_new(0x4ec);
   *local_a3c = (int)local_a3c;
   local_a3c[1] = (int)local_a3c;
   local_a38 = 0;
   local_4 = (HANDLE)0x0;
-  local_a48 = (int *)FUN_10003730((uint32_t *)0x0,0);
+  local_a48 = (int *)FUN_10003730((unsigned int *)0x0,0);
   local_a44 = 0;
-  local_4._0_1_ = 1;
+  *(unsigned char *)&local_4 = 1;
   swprintf(local_7c0,0x1000ccb8,param_1);
-  hFindFile = FindFirstFileW(local_7c0,&local_a10);
+  hFindFile = FindFirstFileW(local_7c0, &local_a10);
   local_a2c = hFindFile;
   if (hFindFile == (HANDLE)0xffffffff) {
-    local_4 = (HANDLE)((uint)local_4._1_3_ << 8);
+    local_4 = (HANDLE)(((unsigned int)((unsigned char *)&local_4)[1]) << 8);
     FUN_100036a0(local_a4c,(int *)&local_a34,(int *)*local_a48,local_a48);
     operator_delete(local_a48);
     local_a48 = (int *)0x0;
     local_a44 = 0;
     local_4 = hFindFile;
-    FUN_100037c0(local_a40,&local_a34,(int *)*local_a3c,local_a3c);
+    FUN_100037c0(local_a40,(undefined4 *)&local_a34,(int *)*local_a3c,local_a3c);
     operator_delete(local_a3c);
     uVar6 = 0;
   }
   else {
     local_a28 = FUN_10002f70(param_1);
     do {
-      if ((*(int **)((int)pThis + 0x4d0) != (int *)0x0) && (**(int **)((int)this + 0x4d0) != 0))
+      if ((*(int **)((int)pThis + 0x4d0) != (int *)0x0) && (**(int **)((int)pThis + 0x4d0) != 0))
       break;
       iVar7 = wcscmp(local_a10.cFileName,(wchar_t *)&DAT_1000ccb4);
       if ((iVar7 != 0) && (iVar7 = wcscmp(local_a10.cFileName,(wchar_t *)&DAT_1000ccac), iVar7 != 0)
@@ -3233,7 +3257,7 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
     piVar12 = (int *)*local_a3c;
     if (piVar12 != local_a3c) {
       do {
-        iVar7 = FUN_10002940(this,(wchar_t *)(piVar12 + 2),1);
+        iVar7 = FUN_10002940(pThis,(wchar_t *)(piVar12 + 2),1);
         if (iVar7 == 0) {
           FUN_10003760(param_2,&local_a30,*(void **)((int)param_2 + 4),piVar12 + 2);
         }
@@ -3306,7 +3330,7 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
 
 
 
-undefined4 __thiscall FUN_100027f0(void *this,LPCWSTR param_1,int *param_2)
+undefined4 __thiscall FUN_100027f0(void *pThis,LPCWSTR param_1,int *param_2)
 
 {
   int iVar1;
@@ -3339,9 +3363,9 @@ undefined4 __thiscall FUN_100027f0(void *this,LPCWSTR param_1,int *param_2)
     piVar5 = (int *)*piVar3;
     if ((int *)*piVar3 != piVar3) {
       do {
-        if ((*(int **)((int)this + 0x4d0) != (int *)0x0) && (**(int **)((int)this + 0x4d0) != 0))
+        if ((*(int **)((int)pThis + 0x4d0) != (int *)0x0) && (**(int **)((int)pThis + 0x4d0) != 0))
         break;
-        iVar1 = FUN_10002940(this,(wchar_t *)(piVar5 + 2),uVar4);
+        iVar1 = FUN_10002940(pThis,(wchar_t *)(piVar5 + 2),uVar4);
         if (iVar1 == 0) {
           piVar6 = (int *)*piVar5;
         }
@@ -3358,7 +3382,7 @@ undefined4 __thiscall FUN_100027f0(void *this,LPCWSTR param_1,int *param_2)
     }
     uVar4 = uVar4 + 1;
     if (4 < uVar4) {
-      FUN_10002ba0(this,(wchar_t *)0x0);
+      FUN_10002ba0(pThis,(wchar_t *)0x0);
       piVar6 = local_14;
       local_4 = 0xffffffff;
       piVar3 = (int *)*local_14;
@@ -3400,10 +3424,10 @@ undefined4 __thiscall FUN_10002940(void *pThis,wchar_t *param_1,uint param_2)
   case 3:
     break;
   case 4:
-    FUN_10002200(this,param_1,4);
+    FUN_10002200(pThis,param_1,4);
     return 1;
   }
-  iVar1 = FUN_10002200(this,param_1,3);
+  iVar1 = FUN_10002200(pThis,param_1,3);
   if (iVar1 == 0) {
     return 0;
   }
@@ -3526,9 +3550,9 @@ void __thiscall FUN_10002ba0(void *pThis,wchar_t *param_1)
   local_c = ExceptionList;
   if (param_1 == (wchar_t *)0x0) {
     ExceptionList = &local_c;
-    sVar4 = wcslen((wchar_t *)((int)this + 0x70c));
+    sVar4 = wcslen((wchar_t *)((int)pThis + 0x70c));
     if (sVar4 != 0) {
-      (*DAT_1000d930)((wchar_t *)((int)this + 0x70c));
+      (*DAT_1000d930)((wchar_t *)((int)pThis + 0x70c));
     }
     ExceptionList = local_c;
     return;
@@ -3538,7 +3562,7 @@ void __thiscall FUN_10002ba0(void *pThis,wchar_t *param_1)
   if (sVar4 == 0) {
     FUN_10003010();
   }
-  lpCriticalSection = (LPCRITICAL_SECTION)((int)this + 0x4ec);
+  lpCriticalSection = (LPCRITICAL_SECTION)((int)pThis + 0x4ec);
   EnterCriticalSection(lpCriticalSection);
   param_1._0_1_ = SUB41(lpCriticalSection,0);
   local_1c[0] = param_1._0_1_;
@@ -3552,7 +3576,7 @@ void __thiscall FUN_10002ba0(void *pThis,wchar_t *param_1)
     local_18[sVar4] = 0;
     local_14 = sVar4;
   }
-  piVar2 = *(int **)((int)this + 0x4e4);
+  piVar2 = *(int **)((int)pThis + 0x4e4);
   local_4 = 0;
   piVar7 = (int *)piVar2[1];
   piVar5 = operator_new(0x18);
@@ -3568,7 +3592,7 @@ void __thiscall FUN_10002ba0(void *pThis,wchar_t *param_1)
   piVar2[1] = (int)piVar5;
   *(int **)piVar5[1] = piVar5;
   FUN_10003810((basic_string<> *)(piVar5 + 2),local_1c);
-  *(int *)((int)this + 0x4e8) = *(int *)((int)this + 0x4e8) + 1;
+  *(int *)((int)pThis + 0x4e8) = *(int *)((int)pThis + 0x4e8) + 1;
   if (local_18 != (undefined2 *)0x0) {
     cVar1 = *(char *)((int)local_18 + -1);
     if ((cVar1 != '\0') && (cVar1 != -1)) {
@@ -4103,7 +4127,7 @@ void __thiscall FUN_100035c0(void *pThis,undefined4 *param_1,void *param_2,basic
 
 
 
-void __thiscall FUN_10003620(void *this,int *param_1,int *param_2)
+void __thiscall FUN_10003620(void *pThis,int *param_1,int *param_2)
 
 {
   char cVar1;
@@ -4127,14 +4151,14 @@ void __thiscall FUN_10003620(void *this,int *param_1,int *param_2)
   param_2[4] = 0;
   param_2[5] = 0;
   operator_delete(param_2);
-  *(int *)((int)pThis + 8) = *(int *)((int)this + 8) + -1;
+  *(int *)((int)pThis + 8) = *(int *)((int)pThis + 8) + -1;
   *param_1 = iVar2;
   return;
 }
 
 
 
-void __thiscall FUN_100036a0(void *this,int *param_1,int *param_2,int *param_3)
+void __thiscall FUN_100036a0(void *pThis,int *param_1,int *param_2,int *param_3)
 
 {
   char cVar1;
@@ -4163,34 +4187,12 @@ void __thiscall FUN_100036a0(void *this,int *param_1,int *param_2,int *param_3)
     param_2[4] = 0;
     param_2[5] = 0;
     operator_delete(param_2);
-    *(int *)((int)pThis + 8) = *(int *)((int)this + 8) + -1;
+    *(int *)((int)pThis + 8) = *(int *)((int)pThis + 8) + -1;
     param_2 = piVar2;
   } while (piVar2 != param_3);
   *param_1 = (int)piVar2;
   return;
 }
-
-
-
-void FUN_10003730(undefined4 *param_1,int param_2)
-
-{
-  undefined4 *puVar1;
-  
-  puVar1 = operator_new(0x18);
-  if (param_1 == (undefined4 *)0x0) {
-    param_1 = puVar1;
-  }
-  *puVar1 = param_1;
-  if (param_2 != 0) {
-    puVar1[1] = param_2;
-    return;
-  }
-  puVar1[1] = puVar1;
-  return;
-}
-
-
 
 undefined4 * __thiscall
 FUN_10003760(void *pThis,undefined4 *param_1,void *param_2,undefined4 *param_3)
@@ -4222,7 +4224,7 @@ FUN_10003760(void *pThis,undefined4 *param_1,void *param_2,undefined4 *param_3)
       puVar3 = puVar3 + 1;
     }
   }
-  *(int *)((int)this + 8) = *(int *)((int)this + 8) + 1;
+  *(int *)((int)pThis + 8) = *(int *)((int)pThis + 8) + 1;
   *param_1 = puVar1;
   return param_1;
 }
@@ -5154,8 +5156,6 @@ LAB_100052cd:
   return;
 }
 
-
-
 void FUN_10005480(void)
 
 {
@@ -5259,8 +5259,6 @@ void __cdecl FUN_10005540(undefined4 param_1,int param_2,int param_3)
   return;
 }
 
-
-
 undefined4 FUN_10005680(int param_1)
 
 {
@@ -5289,8 +5287,6 @@ undefined4 FUN_10005680(int param_1)
                     // WARNING: Subroutine does not return
   ExitThread(0);
 }
-
-
 
 void FUN_10005730(void)
 
